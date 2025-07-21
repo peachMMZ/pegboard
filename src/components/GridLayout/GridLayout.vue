@@ -1,6 +1,14 @@
 <template>
-  <div ref="containerRef" class="pegboard-grid">
-    <div v-for="(item, index) in items" :key="item.id" class="grid-item" :class="itemClass" :style="getItemStyle(item)">
+  <div ref="containerRef" class="pegboard-grid" :style="containerStyle">
+    <div
+      v-for="(item, index) in items"
+      :key="item.id"
+      class="grid-item"
+      :class="itemClass"
+      :style="getItemStyle(item)"
+      @mousedown="startLongPress"
+      @mouseup="cancelLongPress"
+    >
       <slot name="item" :item="item" :index="index">
         <!-- 默认内容 -->
         <div class="resize-handle"></div>
@@ -10,29 +18,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watchEffect } from 'vue'
+import { ref, computed, onMounted, watchEffect } from 'vue'
 import interact from 'interactjs'
 import { GridLayoutProps, GridLayoutItem } from './types'
 
 const {
-  gridSize = 100,
+  cols = 12,
+  rows = 6,
   minHeight = 100,
   minWidth = 100,
   collision = false,
   gapX = 0,
   gapY = 0,
-  itemClass = undefined
+  itemClass = undefined,
+  dragTimeout = 200
 } = defineProps<GridLayoutProps>()
 
 const items = defineModel<Array<GridLayoutItem & Record<string, unknown>>>('value', { default: [] })
-const emits = defineEmits<{ (e: 'update', item: GridLayoutItem): void }>()
+const emits = defineEmits<{
+  (e: 'update', item: GridLayoutItem): void,
+  (e: 'drag-active', item: GridLayoutItem, index: number): void,
+  (e: 'drag-cancel'): void,
+}>()
 
 const containerRef = ref<HTMLElement | null>(null)
+const gridSize = computed(() => {
+  const width = containerRef.value?.offsetWidth || 0
+  const height = containerRef.value?.offsetHeight || 0
+  return {
+    width: Math.floor(width / cols - gapX),
+    height: Math.floor(height / rows - gapY)
+  }
+})
+const containerStyle = computed(() => {
+  const width = containerRef.value?.offsetWidth || 0
+  const height = containerRef.value?.offsetHeight || 0
+  const gridTotalWidth = gridSize.value.width * cols + gapX * (cols - 1)
+  const gridTotalHeight = gridSize.value.height * rows + gapY * (rows - 1)
+  const paddingX = (width - gridTotalWidth) / 2
+  const paddingY = (height - gridTotalHeight) / 2
+  return {
+    paddingLeft: `${paddingX}px`,
+    paddingRight: `${paddingX}px`,
+    paddingTop: `${paddingY}px`,
+    paddingBottom: `${paddingY}px`,
+  }
+})
 
 const getItemStyle = (item: GridLayoutItem) => ({
-  transform: `translate(${item.x * (gridSize + gapX)}px, ${item.y * (gridSize + gapY)}px)`,
-  width: `${item.w * gridSize + (item.w - 1) * gapX}px`,
-  height: `${item.h * gridSize + (item.h - 1) * gapY}px`,
+  transform: `translate(${item.x * (gridSize.value.width + gapX)}px, ${item.y * (gridSize.value.height + gapY)}px)`,
+  width: `${item.w * gridSize.value.width + (item.w - 1) * gapX}px`,
+  height: `${item.h * gridSize.value.height + (item.h - 1) * gapY}px`,
 })
 
 const isColliding = (item: GridLayoutItem, index: number) => {
@@ -50,8 +86,8 @@ function getSnappedItemBounds(target: HTMLElement) {
   const w = parseFloat(target.style.width || '0')
   const h = parseFloat(target.style.height || '0')
 
-  const unitX = gridSize + gapX
-  const unitY = gridSize + gapY
+  const unitX = gridSize.value.width + gapX
+  const unitY = gridSize.value.height + gapY
 
   return {
     x: Math.round(x / unitX),
@@ -63,10 +99,10 @@ function getSnappedItemBounds(target: HTMLElement) {
 
 function applyItemToDOM(target: HTMLElement, item: GridLayoutItem) {
   const { x, y, w, h } = item
-  const translateX = x * (gridSize + gapX)
-  const translateY = y * (gridSize + gapY)
-  const width = w * gridSize + (w - 1) * gapX
-  const height = h * gridSize + (h - 1) * gapY
+  const translateX = x * (gridSize.value.width + gapX)
+  const translateY = y * (gridSize.value.height + gapY)
+  const width = w * gridSize.value.width + (w - 1) * gapX
+  const height = h * gridSize.value.height + (h - 1) * gapY
 
   target.setAttribute('data-x', translateX + '')
   target.setAttribute('data-y', translateY + '')
@@ -95,23 +131,38 @@ function updateItem(target: HTMLElement, index: number) {
   }
 
   emits('update', item)
+  isDraggable.value = false
 }
 
-watchEffect(() => {
-  if (!containerRef.value) return
-  const gridItems = containerRef.value.querySelectorAll('.grid-item')
-  gridItems.forEach((el, index) => {
-    const item = items.value[index]
-    if (item && el instanceof HTMLElement) {
-      applyItemToDOM(el, item)
+let longPressTimer: NodeJS.Timeout | null = null
+let isDraggable = ref(false)
+
+const startLongPress = (e: MouseEvent) => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer)
+  }
+  longPressTimer = setTimeout(() => {
+    const gridItem = (e.target as HTMLElement).closest('.grid-item')
+    if (gridItem) {
+      const index = Array.from(gridItem.parentNode?.children || []).indexOf(gridItem)
+      emits('drag-active', items.value[index], index)
     }
-  })
-})
+    isDraggable.value = true
+  }, dragTimeout)
+}
+const cancelLongPress = () => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer)
+    longPressTimer = null
+  }
+  emits('drag-cancel')
+}
 
 onMounted(() => {
-  interact('.grid-item')
+  const dragController = interact('.grid-item')
     .draggable({
       inertia: false,
+      cursorChecker: () => '',
       modifiers: [
         interact.modifiers.restrictRect({
           restriction: containerRef.value!,
@@ -120,6 +171,7 @@ onMounted(() => {
       ],
       listeners: {
         move(event) {
+          if (!isDraggable.value) return
           const target = event.target
           const dx = event.dx
           const dy = event.dy
@@ -134,12 +186,15 @@ onMounted(() => {
           target.setAttribute('data-y', newY)
         },
         end(event) {
+          if (!isDraggable.value) return
           const target = event.target
           const index = Array.from(target.parentNode.children).indexOf(target)
           updateItem(target, index)
+          isDraggable.value = false
         }
       }
     })
+  interact('.grid-item')
     .resizable({
       edges: { left: false, top: false, right: true, bottom: true },
       modifiers: [
@@ -168,6 +223,21 @@ onMounted(() => {
         }
       }
     })
+  watchEffect(() => {
+    // 容器尺寸改变时，重新计算布局
+    if (!containerRef.value) return
+    const gridItems = containerRef.value.querySelectorAll('.grid-item')
+    gridItems.forEach((el, index) => {
+      const item = items.value[index]
+      if (item && el instanceof HTMLElement) {
+        applyItemToDOM(el, item)
+      }
+    })
+    // 拖拽同步
+    if (isDraggable.value) {
+      dragController.draggable({ enabled: true })
+    }
+  })
 })
 
 </script>
@@ -183,6 +253,7 @@ onMounted(() => {
   position: absolute;
   box-sizing: border-box;
   user-select: none;
+  cursor: pointer;
 }
 
 .resize-handle {

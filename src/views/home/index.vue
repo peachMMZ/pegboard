@@ -2,9 +2,19 @@
   <div class="h-full w-full flex flex-col p-2 overflow-hidden">
     <Transition :name="`slide-${currentDirection}`" mode="out-in" :duration="150">
       <div v-if="currentPegboard" :key="currentPegboard.id" class="flex-1 w-full overflow-hidden">
-        <GridLayout v-model:value="currentPegboard.items" :cols="12" :grid-size="100" :gap-x="5" :gap-y="5" collision>
-          <template #item="{ item }">
-            <div class="p-2 w-full h-full flex flex-col border-2">
+        <GridLayout
+          v-model:value="currentPegboard.items"
+          :gap-x="5"
+          :gap-y="5"
+          collision
+          @drag-active="handleDragActive"
+          @drag-cancel="handleDragCancel"
+        >
+          <template #item="{ item, index }">
+            <div
+              class="p-2 w-full h-full flex flex-col border-2"
+              :class="dragStates[index] ? 'active-effect' : ''"
+            >
               <h6>{{ item.name }}</h6>
               <div class="flex gap-2">
                 <span>x: {{ item.x }}</span>
@@ -19,7 +29,7 @@
         </GridLayout>
       </div>
     </Transition>
-    <div class="h-8 w-full flex justify-center">
+    <div class="h-6 w-full flex justify-center">
       <NPagination
         :current="currentIndex + 1"
         :page-count="pegboardStore.pegboardList.length"
@@ -69,6 +79,14 @@ function goToIndex(index: number) {
   }
 }
 
+const dragStates = ref<{ [key: number]: boolean }>({})
+function handleDragActive(_item: unknown, index: number) {
+  dragStates.value[index] = true
+}
+function handleDragCancel() {
+  dragStates.value = {}
+}
+
 onMounted(() => {
 })
 </script>
@@ -102,5 +120,12 @@ onMounted(() => {
 .slide-prev-enter-active,
 .slide-prev-leave-active {
   transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.active-effect {
+  transform-origin: center center;
+  scale: 0.98;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease-in-out;
 }
 </style>

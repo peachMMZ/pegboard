@@ -1,5 +1,6 @@
 export interface GridLayoutProps {
-  gridSize?: number
+  cols?: number
+  rows?: number
   minWidth?: number
   minHeight?: number
   collision?: boolean
@@ -7,6 +8,7 @@ export interface GridLayoutProps {
   gapY?: number
   border?: number
   itemClass?: string
+  dragTimeout?: number
 }
 
 export interface GridLayoutItem {

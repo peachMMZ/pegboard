@@ -1,12 +1,16 @@
-import { moveWindow, Position } from '@tauri-apps/plugin-positioner'
-import { getCurrentWindow, LogicalPosition } from '@tauri-apps/api/window'
+import { getCurrentWindow, PhysicalPosition, currentMonitor } from '@tauri-apps/api/window'
 import { isRegistered, register } from '@tauri-apps/plugin-global-shortcut'
 
 export async function setupWindow() {
-  await moveWindow(Position.BottomCenter)
+  const monitor = await currentMonitor()
+  if (!monitor) {
+    return
+  }
   const currentWindow = getCurrentWindow()
-  const { x, y } = await currentWindow.outerPosition()
-  await currentWindow.setPosition(new LogicalPosition(x, y - 50))
+  const { x } = await currentWindow.outerPosition()
+  const windowSize = await currentWindow.innerSize()
+  const bottom = monitor.workArea.size.height - windowSize.height
+  await currentWindow.setPosition(new PhysicalPosition(x, bottom))
   await currentWindow.show()
   await currentWindow.setFocus()
 }

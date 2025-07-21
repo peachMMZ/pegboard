@@ -1,5 +1,5 @@
 <template>
-  <NConfigProvider :theme-overrides="themeOverride" :theme="naiveTheme">
+  <NConfigProvider :theme-overrides="themeOverride" :theme="naiveTheme" :locale="zhCN">
     <div class="h-screen">
       <RouterView />
     </div>
@@ -13,7 +13,8 @@ import {
   type GlobalThemeOverrides,
   lightTheme,
   darkTheme,
-  useOsTheme
+  useOsTheme,
+  zhCN
 } from 'naive-ui'
 import { setTheme } from '@tauri-apps/api/app'
 

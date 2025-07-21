@@ -4,21 +4,21 @@
       <div v-if="currentPegboard" :key="currentPegboard.id" class="flex-1 w-full overflow-hidden">
         <GridLayout
           v-model:value="currentPegboard.items"
-          :gap-x="5"
-          :gap-y="5"
+          :gap-x="2"
+          :gap-y="2"
           collision
           @drag-active="handleDragActive"
           @drag-cancel="handleDragCancel"
         >
           <template #item="{ item, index }">
             <div
-              class="p-2 w-full h-full flex flex-col justify-around border-1"
-              :class="dragStates[index] ? 'active-effect' : ''"
+              class="p-2 w-full h-full flex flex-col justify-between border-1"
+              :class="getItemClass(index)"
             >
               <div class="flex justify-center">
                 <img class="w-2/3" src="/icon/icon_bilibili.png" alt="" style="object-fit: cover;">
               </div>
-              <div class="flex justify-center items-center">
+              <div class="flex justify-start items-center">
                 <span>{{ item.name }}</span>
               </div>
             </div>
@@ -83,6 +83,11 @@ function handleDragActive(_item: unknown, index: number) {
 function handleDragCancel() {
   dragStates.value = {}
 }
+function getItemClass(index: number) {
+  if (dragStates.value[index]) {
+    return 'active-effect'
+  }
+}
 
 onMounted(() => {
 })
@@ -122,7 +127,6 @@ onMounted(() => {
 .active-effect {
   transform-origin: center center;
   scale: 0.98;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease-in-out;
 }
 </style>

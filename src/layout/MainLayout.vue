@@ -1,10 +1,10 @@
 <template>
   <div class="h-full">
     <NLayout class="h-full">
-      <NLayoutHeader class="h-10 p-2">
+      <NLayoutHeader class="h-12 p-2">
         <Header></Header>
       </NLayoutHeader>
-      <NLayoutContent class="h-[calc(100%-5rem)]">
+      <NLayoutContent class="h-[calc(100%-5.5rem)]">
         <RouterView #default="{ Component }">
           <KeepAlive>
             <Transition name="fade">

@@ -55,6 +55,7 @@ pub fn run() {
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_positioner::init())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_fs_pro::init())
         .invoke_handler(tauri::generate_handler![greet])
         .setup(|app| {
             setup_tray(app.handle())?;

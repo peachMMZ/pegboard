@@ -12,17 +12,14 @@
         >
           <template #item="{ item, index }">
             <div
-              class="p-2 w-full h-full flex flex-col border-2"
+              class="p-2 w-full h-full flex flex-col justify-around border-1"
               :class="dragStates[index] ? 'active-effect' : ''"
             >
-              <h6>{{ item.name }}</h6>
-              <div class="flex gap-2">
-                <span>x: {{ item.x }}</span>
-                <span>y: {{ item.y }}</span>
+              <div class="flex justify-center">
+                <img class="w-2/3" src="/icon/icon_bilibili.png" alt="" style="object-fit: cover;">
               </div>
-              <div class="flex gap-2">
-                <span>w: {{ item.w }}</span>
-                <span>h: {{ item.h }}</span>
+              <div class="flex justify-center items-center">
+                <span>{{ item.name }}</span>
               </div>
             </div>
           </template>

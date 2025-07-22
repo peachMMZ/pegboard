@@ -907,6 +907,11 @@ evtd@^0.2.2, evtd@^0.2.4:
   resolved "https://registry.npmmirror.com/evtd/-/evtd-0.2.4.tgz#0aac39ba44d6926e6668948ac27618e0795b9d07"
   integrity sha512-qaeGN5bx63s/AXgQo8gj6fBkxge+OoLddLniox5qtLAEY5HSnuSlISXVPxnSae1dWblvTh4/HoMIB+mbMsvZzw==
 
+fast-average-color@^9.5.0:
+  version "9.5.0"
+  resolved "https://registry.npmmirror.com/fast-average-color/-/fast-average-color-9.5.0.tgz#deade6bd998c0ea399a519ed1e2cd67ef673f112"
+  integrity sha512-nC6x2YIlJ9xxgkMFMd1BNoM1ctMjNoRKfRliPmiEWW3S6rLTHiQcy9g3pt/xiKv/D0NAAkhb9VyV+WJFvTqMGg==
+
 fdir@^6.4.4:
   version "6.4.6"
   resolved "https://registry.npmmirror.com/fdir/-/fdir-6.4.6.tgz"

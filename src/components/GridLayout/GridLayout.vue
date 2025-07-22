@@ -254,6 +254,7 @@ onMounted(() => {
   box-sizing: border-box;
   user-select: none;
   cursor: pointer;
+  padding: 2px;
 }
 
 .resize-handle {

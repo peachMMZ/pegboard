@@ -11,17 +11,7 @@
           @drag-cancel="handleDragCancel"
         >
           <template #item="{ item, index }">
-            <div
-              class="p-2 w-full h-full flex flex-col justify-between border-1"
-              :class="getItemClass(index)"
-            >
-              <div class="flex justify-center">
-                <img class="w-2/3" src="/icon/icon_bilibili.png" alt="" style="object-fit: cover;">
-              </div>
-              <div class="flex justify-start items-center">
-                <span>{{ item.name }}</span>
-              </div>
-            </div>
+            <Tile :class="getItemClass(index)" :item="item" />
           </template>
         </GridLayout>
       </div>
@@ -56,6 +46,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { usePegboardStore } from '@/repository/pegboard'
 import { GridLayout } from '@/components/GridLayout'
 import { renderIcon } from '@/utils/renderer'
+import Tile from './components/Tile.vue'
 
 const pegboardStore = usePegboardStore()
 

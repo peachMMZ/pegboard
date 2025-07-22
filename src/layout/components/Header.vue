@@ -9,7 +9,8 @@
       </NInput>
     </div>
     <div class="flex items-center">
-      <NButton type="primary" quaternary :render-icon="renderIcon(ChevronDown)"></NButton>
+      <NButton type="primary" quaternary :render-icon="renderIcon(PlusCircle)"></NButton>
+      <NButton type="primary" quaternary :render-icon="renderIcon(ChevronDownCircle, { color: themeVars.warningColor })"></NButton>
     </div>
   </div>
 </template>
@@ -18,9 +19,12 @@
 import {
   NInput,
   NButton,
-  NIcon
+  NIcon,
+  useThemeVars
 } from 'naive-ui'
-import { Search, ChevronDown } from 'lucide-vue-next'
+import { Search, ChevronDownCircle, PlusCircle } from 'lucide-vue-next'
 import { renderIcon } from '@/utils/renderer'
+
+const themeVars = useThemeVars()
 </script>
 <style scoped></style>

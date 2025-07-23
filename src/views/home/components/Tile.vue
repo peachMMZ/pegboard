@@ -1,5 +1,5 @@
 <template>
-  <div class="tile" :style="tileStyle">
+  <div class="tile" :style="tileStyle" @dblclick="openApp">
     <div class="tile-bg"></div>
     <div :class="['tile-icon', { 'tile-icon-mini': isMini }]">
       <img :src="item.icon || DefaultIcon" alt="" />
@@ -18,6 +18,7 @@ import {
 import { PegboardItem } from '@/repository/pegboard'
 import { lighten } from '@/utils/color'
 import DefaultIcon from '@/assets/vue.svg'
+import { openPath } from '@tauri-apps/plugin-opener'
 
 const props = defineProps<{ item: PegboardItem & { w?: number, h?: number } }>()
 
@@ -45,6 +46,12 @@ const isMini = computed(() => {
   // 只要 w 或 h 不为 1 就显示 title
   return props.item.w === 1 && props.item.h === 1
 })
+
+function openApp() {
+  if (props.item.path) {
+    openPath(props.item.path)
+  }
+}
 </script>
 
 <style scoped>

@@ -1,16 +1,21 @@
 <template>
   <div class="flex justify-between items-center">
-    <div></div>
-    <div class="basis-1/2">
+    <div class="basis-1/4"></div>
+    <div class="basis-1/2 flex justify-center">
       <NInput size="small">
         <template #suffix>
           <NIcon :component="Search"></NIcon>
         </template>
       </NInput>
     </div>
-    <div class="flex items-center">
+    <div class="basis-1/4 flex justify-end items-center">
       <NButton type="primary" quaternary :render-icon="renderIcon(PlusCircle)"></NButton>
-      <NButton type="primary" quaternary :render-icon="renderIcon(ChevronDownCircle, { color: themeVars.warningColor })"></NButton>
+      <NButton
+        type="primary"
+        quaternary
+        :render-icon="renderIcon(ChevronDownCircle, { color: themeVars.warningColor })"
+        @click="hide"
+      ></NButton>
     </div>
   </div>
 </template>
@@ -24,6 +29,14 @@ import {
 } from 'naive-ui'
 import { Search, ChevronDownCircle, PlusCircle } from 'lucide-vue-next'
 import { renderIcon } from '@/utils/renderer'
+import { getAllWindows } from '@tauri-apps/api/window'
+
+async function hide() {
+  const windows = await getAllWindows()
+  windows.forEach((window) => {
+    window.hide()
+  })
+}
 
 const themeVars = useThemeVars()
 </script>

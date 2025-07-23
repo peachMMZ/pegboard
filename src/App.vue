@@ -1,8 +1,10 @@
 <template>
   <NConfigProvider :theme-overrides="themeOverride" :theme="naiveTheme" :locale="zhCN">
-    <div class="h-screen">
-      <RouterView />
-    </div>
+    <NMessageProvider>
+      <div class="h-screen">
+        <RouterView />
+      </div>
+    </NMessageProvider>
   </NConfigProvider>
 </template>
 
@@ -10,6 +12,7 @@
 import { computed, onMounted } from 'vue'
 import {
   NConfigProvider,
+  NMessageProvider,
   type GlobalThemeOverrides,
   lightTheme,
   darkTheme,
@@ -17,6 +20,7 @@ import {
   zhCN
 } from 'naive-ui'
 import { setTheme } from '@tauri-apps/api/app'
+import { usePegboardStore } from '@/repository/pegboard'
 
 const osTheme = useOsTheme()
 const naiveTheme = computed(() => osTheme.value === 'dark' ? darkTheme : lightTheme)
@@ -30,8 +34,11 @@ const themeOverride: GlobalThemeOverrides = {
   }
 }
 
-onMounted(() => {
+const pegboardStore = usePegboardStore()
+
+onMounted(async () => {
   setTheme(null)
+  await pegboardStore.init()
 })
 </script>
 <style scoped></style>

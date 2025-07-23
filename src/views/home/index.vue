@@ -16,7 +16,7 @@
         </GridLayout>
       </div>
     </Transition>
-    <div class="h-6 w-full flex justify-center">
+    <div v-if="pegboardStore.pegboardList.length > 0" class="h-6 w-full flex justify-center">
       <NPagination
         :current="currentIndex + 1"
         :page-count="pegboardStore.pegboardList.length"
@@ -37,16 +37,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import {
   NButton,
   NPagination,
+  useMessage
 } from 'naive-ui'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { usePegboardStore } from '@/repository/pegboard'
 import { GridLayout } from '@/components/GridLayout'
 import { renderIcon } from '@/utils/renderer'
+import { getCurrentWindow, DragDropEvent } from '@tauri-apps/api/window'
+import { Event } from '@tauri-apps/api/event'
 import Tile from './components/Tile.vue'
+
+const message = useMessage()
 
 const pegboardStore = usePegboardStore()
 
@@ -80,7 +85,29 @@ function getItemClass(index: number) {
   }
 }
 
-onMounted(() => {
+async function onDragDrop(event: Event<DragDropEvent>) {
+  if (event.event === 'tauri://drag-drop' && event.payload.type === 'drop') {
+    const paths = event.payload.paths
+    if (paths && paths.length > 0) {
+      paths.forEach((path) => {
+        pegboardStore.newItem(path).then((item) => {
+          pegboardStore.addItem(currentPegboard.value.id, item)
+        }).catch((err) => {
+          message.error(err)
+        })
+      })
+    }
+  }
+}
+
+let unListen: () => void
+onMounted(async () => {
+  const window = getCurrentWindow()
+  unListen = await window.onDragDropEvent(onDragDrop)
+})
+
+onUnmounted(() => {
+  unListen()
 })
 </script>
 <style scoped>

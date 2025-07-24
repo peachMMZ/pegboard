@@ -24,6 +24,12 @@
     "global-shortcut:allow-register",
     "global-shortcut:allow-unregister",
     "fs-pro:default",
-    "store:default"
+    "store:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        { "url": "https://api.seniverse.com/**" }
+      ]
+    }
   ]
 }

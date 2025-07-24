@@ -7,3 +7,7 @@ export function lighten(hex: string, percent = 20) {
   b = Math.min(255, Math.round(b + (255 - b) * percent / 100))
   return `rgb(${r},${g},${b})`
 }
+
+export function randomColor() {
+  return `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`
+}

@@ -11,7 +11,8 @@
           @drag-cancel="handleDragCancel"
         >
           <template #item="{ item, index }">
-            <Tile :class="getItemClass(index)" :item="item" />
+            <AppWidget v-if="item.type === 'app'" :class="getItemClass(index)" :item="item" />
+            <ClockWidget v-else-if="item.type === 'clock'" :class="getItemClass(index)" :item="item" />
           </template>
         </GridLayout>
       </div>
@@ -49,7 +50,8 @@ import { GridLayout } from '@/components/GridLayout'
 import { renderIcon } from '@/utils/renderer'
 import { getCurrentWindow, DragDropEvent } from '@tauri-apps/api/window'
 import { Event } from '@tauri-apps/api/event'
-import Tile from './components/Tile.vue'
+import AppWidget from '@/widgets/AppWidget.vue'
+import ClockWidget from '@/widgets/ClockWidget.vue'
 
 const message = useMessage()
 
@@ -90,7 +92,7 @@ async function onDragDrop(event: Event<DragDropEvent>) {
     const paths = event.payload.paths
     if (paths && paths.length > 0) {
       paths.forEach((path) => {
-        pegboardStore.newItem(path).then((item) => {
+        pegboardStore.newAppItem(path).then((item) => {
           pegboardStore.addItem(currentPegboard.value.id, item)
         }).catch((err) => {
           message.error(err)
@@ -107,7 +109,9 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  unListen()
+  if (unListen) {
+    unListen()
+  }
 })
 </script>
 <style scoped>

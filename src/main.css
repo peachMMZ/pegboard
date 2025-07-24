@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'Digital-1';
+  src: url('@/assets/fonts/DS-Digital/DS-DIGI-1.ttf');
+}
+
+@font-face {
+  font-family: 'Digital-2';
+  src: url('@/assets/fonts/DS-Digital/DS-DIGIB-2.ttf');
+}
+
+@font-face {
+  font-family: 'Digital-3';
+  src: url('@/assets/fonts/DS-Digital/DS-DIGII-3.ttf');
+}
+
+@font-face {
+  font-family: 'Digital-4';
+  src: url('@/assets/fonts/DS-Digital/DS-DIGIT-4.ttf');
+}

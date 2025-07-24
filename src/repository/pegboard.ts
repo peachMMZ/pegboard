@@ -13,8 +13,11 @@ export interface Pegboard {
   items: PegboardItem[]
 }
 
+export type PegboardItemType = 'app' | 'folder' | 'file' | 'clock' | 'image'
+
 export interface PegboardItem extends GridLayoutItem {
   name?: string
+  type: PegboardItemType
   icon?: string
   color?: string
   path?: string
@@ -41,7 +44,32 @@ export const usePegboardStore = defineStore('pegboard', () => {
     }, { deep: true })
   }
 
-  const newItem = async (path: string, gridSize = 12) => {
+  const findAvaiablePosition = (w: number, h: number, gridSize = 12) => {
+    const existingItems = pegboardList.value.flatMap((p) => p.items)
+    let x = 0
+    let y = 0
+    let found = false
+    while(!found) {
+      const overlap = existingItems.some((existing) => {
+        return !(x + w <= existing.x ||
+              x >= existing.x + existing.w ||
+              y + h <= existing.y ||
+              y >= existing.y + existing.h)
+      })
+      if (!overlap) {
+        found = true
+      } else {
+        x += w
+        if (x + w > gridSize) {
+          x = 0
+          y += h
+        }
+      }
+    }
+    return { x, y }
+  }
+
+  const newAppItem = async (path: string, gridSize = 12) => {
     const existingItems = pegboardList.value.flatMap((p) => p.items)
     if (existingItems.some((i) => i.path === path)) {
       return Promise.reject('已存在')
@@ -50,31 +78,8 @@ export const usePegboardStore = defineStore('pegboard', () => {
     // 找到可用的位置
     const w = 1
     const h = 1
-    let x = 0
-    let y = 0
 
-    const findAvaiablePosition = () => {
-      let found = false
-      while(!found) {
-        const overlap = existingItems.some((existing) => {
-          return !(x + w <= existing.x ||
-                x >= existing.x + existing.w ||
-                y + h <= existing.y ||
-                y >= existing.y + existing.h)
-        })
-        if (!overlap) {
-          found = true
-        } else {
-          x += w
-          if (x + w > gridSize) {
-            x = 0
-            y += h
-          }
-        }
-      }
-      return { x, y }
-    }
-    const { x: posX, y: posY } = findAvaiablePosition()
+    const { x: posX, y: posY } = findAvaiablePosition(w, h, gridSize)
     const name = path.split('\\').pop()?.split('.')[0] || 'unknown'
     const fastAverageColor = new FastAverageColor()
     const iconDir = await join(await appDataDir(), 'icon', name)
@@ -84,6 +89,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
     const item: PegboardItem = {
       id: Date.now(),
       name,
+      type: 'app',
       x: posX,
       y: posY,
       w,
@@ -112,7 +118,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
   return {
     pegboardList,
     init,
-    newItem,
+    newAppItem,
     addItem,
     removeItem,
   }

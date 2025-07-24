@@ -4,7 +4,7 @@
       <NLayoutHeader class="h-12 p-2">
         <Header></Header>
       </NLayoutHeader>
-      <NLayoutContent class="h-[calc(100%-5.5rem)]">
+      <NLayoutContent class="h-[calc(100%-6rem)]" content-class="h-full" :native-scrollbar="false">
         <RouterView #default="{ Component }">
           <KeepAlive>
             <Transition name="fade">
@@ -13,7 +13,7 @@
           </KeepAlive>
         </RouterView>
       </NLayoutContent>
-      <NLayoutFooter class="h-10 p-2">
+      <NLayoutFooter class="h-12 p-2">
         <Footer></Footer>
       </NLayoutFooter>
     </NLayout>

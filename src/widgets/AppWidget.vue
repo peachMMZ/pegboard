@@ -20,7 +20,7 @@ import { lighten } from '@/utils/color'
 import DefaultIcon from '@/assets/vue.svg'
 import { openPath } from '@tauri-apps/plugin-opener'
 
-const props = defineProps<{ item: PegboardItem & { w?: number, h?: number } }>()
+const props = defineProps<{ item: PegboardItem }>()
 
 const themeVars = useThemeVars()
 

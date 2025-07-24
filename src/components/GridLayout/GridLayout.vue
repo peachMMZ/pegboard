@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends GridLayoutItem">
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import interact from 'interactjs'
 import { GridLayoutProps, GridLayoutItem } from './types'
@@ -34,7 +34,7 @@ const {
   dragTimeout = 200
 } = defineProps<GridLayoutProps>()
 
-const items = defineModel<Array<GridLayoutItem & Record<string, unknown>>>('value', { default: [] })
+const items = defineModel<T[]>('value', { default: [] })
 const emits = defineEmits<{
   (e: 'update', item: GridLayoutItem): void,
   (e: 'drag-active', item: GridLayoutItem, index: number): void,

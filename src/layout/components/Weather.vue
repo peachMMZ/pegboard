@@ -2,7 +2,7 @@
   <div class="w-fit flex items-center">
     <img class="w-6 cursor-pointer mx-2" :src="imgSrc" alt="weather icon" @mouseenter="dataVisible = true" @mouseleave="dataVisible = false">
     <Transition name="slide">
-      <div v-show="dataVisible" class="h-full flex justify-start items-center gap-x-2">
+      <div v-if="weatherData.now && dataVisible" class="h-full flex justify-start items-center gap-x-2">
         <div class="flex items-center gap-1">
           <NIcon :component="MapPin" :size="12"></NIcon>
           <span class="text-sm">{{ weatherData.location?.name }}</span>

@@ -3121,6 +3121,7 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
+ "tauri-plugin-fs",
  "tauri-plugin-fs-pro",
  "tauri-plugin-global-shortcut",
  "tauri-plugin-http",

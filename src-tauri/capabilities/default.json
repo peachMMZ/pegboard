@@ -30,6 +30,12 @@
       "allow": [
         { "url": "https://api.seniverse.com/**" }
       ]
+    },
+    {
+      "identifier": "fs:allow-remove",
+      "allow": [
+        { "path": "$APPDATA/**" }
+      ]
     }
   ]
 }

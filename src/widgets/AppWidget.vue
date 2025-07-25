@@ -1,8 +1,8 @@
 <template>
-  <div class="tile" :style="tileStyle" @dblclick="openApp">
+  <div class="tile" :style="tileStyle" @dblclick="pegboardStore.openApp(item)">
     <div class="tile-bg"></div>
     <div :class="['tile-icon', { 'tile-icon-mini': isMini }]">
-      <img :src="item.icon || DefaultIcon" alt="" />
+      <img :src="item.iconUrl || DefaultIcon" alt="" />
     </div>
     <div v-if="!isMini" class="tile-title">
       {{ item.name }}
@@ -15,14 +15,14 @@ import { computed, CSSProperties } from 'vue'
 import {
   useThemeVars
 } from 'naive-ui'
-import { PegboardItem } from '@/repository/pegboard'
+import { usePegboardStore, PegboardItem } from '@/repository/pegboard'
 import { lighten } from '@/utils/color'
 import DefaultIcon from '@/assets/vue.svg'
-import { openPath } from '@tauri-apps/plugin-opener'
 
 const props = defineProps<{ item: PegboardItem }>()
 
 const themeVars = useThemeVars()
+const pegboardStore = usePegboardStore()
 
 const tileStyle = computed<CSSProperties>(() => {
   const c1 = props.item.color || themeVars.value.primaryColor || '#2196f3'
@@ -47,11 +47,6 @@ const isMini = computed(() => {
   return props.item.w === 1 && props.item.h === 1
 })
 
-function openApp() {
-  if (props.item.path) {
-    openPath(props.item.path)
-  }
-}
 </script>
 
 <style scoped>

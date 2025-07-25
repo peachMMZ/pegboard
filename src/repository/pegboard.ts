@@ -2,10 +2,12 @@ import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { GridLayoutItem } from '@/components/GridLayout'
 import { convertFileSrc } from '@tauri-apps/api/core'
-import { join, appDataDir } from '@tauri-apps/api/path'
+import { join, appDataDir, sep } from '@tauri-apps/api/path'
 import { icon } from 'tauri-plugin-fs-pro-api'
 import { FastAverageColor } from 'fast-average-color'
 import { LazyStore } from '@tauri-apps/plugin-store'
+import { openPath } from '@tauri-apps/plugin-opener'
+import { remove } from '@tauri-apps/plugin-fs'
 
 export interface Pegboard {
   id: number
@@ -18,7 +20,8 @@ export type PegboardItemType = 'app' | 'folder' | 'file' | 'clock' | 'image'
 export interface PegboardItem extends GridLayoutItem {
   name?: string
   type: PegboardItemType
-  icon?: string
+  iconPath?: string
+  iconUrl?: string
   color?: string
   path?: string
 }
@@ -96,7 +99,8 @@ export const usePegboardStore = defineStore('pegboard', () => {
       h,
       path,
       color,
-      icon: iconSrc
+      iconPath,
+      iconUrl: iconSrc
     }
     return item
   }
@@ -108,10 +112,21 @@ export const usePegboardStore = defineStore('pegboard', () => {
     }
   }
 
-  const removeItem = (pegboardId: number, itemId: number) => {
-    const pegboard = pegboardList.value.find((p) => p.id === pegboardId)
+  const removeItem = (item: PegboardItem) => {
+    const pegboard = pegboardList.value.find((p) => p.items.some((i) => i.id === item.id))
     if (pegboard) {
-      pegboard.items = pegboard.items.filter((i) => i.id !== itemId)
+      const itemToRemove = pegboard.items.find((i) => i.id === item.id)
+      if (itemToRemove && itemToRemove.iconPath) {
+        const iconDirPath = itemToRemove.iconPath.split(sep()).slice(0, -1).join(sep())
+        remove(iconDirPath, { recursive: true })
+      }
+      pegboard.items = pegboard.items.filter((i) => i.id !== item.id)
+    }
+  }
+
+  const openApp = async (item: PegboardItem) => {
+    if (item.type === 'app' && item.path) {
+      await openPath(item.path)
     }
   }
 
@@ -121,5 +136,6 @@ export const usePegboardStore = defineStore('pegboard', () => {
     newAppItem,
     addItem,
     removeItem,
+    openApp
   }
 })

@@ -11,7 +11,7 @@
           @drag-cancel="handleDragCancel"
         >
           <template #item="{ item, index }">
-            <AppWidget v-if="item.type === 'app'" :class="getItemClass(index)" :item="item" />
+            <AppWidget v-if="item.type === 'app'" :class="getItemClass(index)" :item="item" @contextmenu="(e: MouseEvent) => handleTileContextMenu(e, item)" />
             <ClockWidget v-else-if="item.type === 'clock'" :class="getItemClass(index)" :item="item" />
           </template>
         </GridLayout>
@@ -34,24 +34,30 @@
         </template>
       </NPagination>
     </div>
+    <DropdownMenu
+      v-model:show="dropdownShow"
+      :item="selectedItem"
+      :position="dropdownPosition"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import {
   NButton,
   NPagination,
   useMessage
 } from 'naive-ui'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import { usePegboardStore } from '@/repository/pegboard'
+import { PegboardItem, usePegboardStore } from '@/repository/pegboard'
 import { GridLayout } from '@/components/GridLayout'
 import { renderIcon } from '@/utils/renderer'
 import { getCurrentWindow, DragDropEvent } from '@tauri-apps/api/window'
 import { Event } from '@tauri-apps/api/event'
 import AppWidget from '@/widgets/AppWidget.vue'
 import ClockWidget from '@/widgets/ClockWidget.vue'
+import DropdownMenu from './components/DropdownMenu.vue'
 
 const message = useMessage()
 
@@ -100,6 +106,19 @@ async function onDragDrop(event: Event<DragDropEvent>) {
       })
     }
   }
+}
+
+const selectedItem = ref<PegboardItem>()
+const dropdownPosition = ref({ x: 0, y: 0 })
+const dropdownShow = ref(false)
+function handleTileContextMenu(e: MouseEvent, item: PegboardItem) {
+  e.preventDefault()
+  selectedItem.value = item
+  dropdownShow.value = false
+  nextTick(() => {
+    dropdownPosition.value = { x: e.clientX, y: e.clientY }
+    dropdownShow.value = true
+  })
 }
 
 let unListen: () => void

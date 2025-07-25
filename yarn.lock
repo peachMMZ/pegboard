@@ -546,6 +546,13 @@
     "@tauri-apps/cli-win32-ia32-msvc" "2.6.2"
     "@tauri-apps/cli-win32-x64-msvc" "2.6.2"
 
+"@tauri-apps/plugin-fs@~2":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-fs/-/plugin-fs-2.4.1.tgz#745e8db6b21d717aae3fa73cca3ced0bf7eff424"
+  integrity sha512-vJlKZVGF3UAFGoIEVT6Oq5L4HGDCD78WmA4uhzitToqYiBKWAvZR61M6zAyQzHqLs0ADemkE4RSy/5sCmZm6ZQ==
+  dependencies:
+    "@tauri-apps/api" "^2.6.0"
+
 "@tauri-apps/plugin-global-shortcut@~2":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-global-shortcut/-/plugin-global-shortcut-2.3.0.tgz#e49a3e372e8d3ce38001b616ac0aabd8f8b5f6ad"

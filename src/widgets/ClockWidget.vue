@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { PegboardItem } from '@/repository/pegboard'
+import { PegboardItem } from '@/store/pegboard'
 
 defineProps<{ item: PegboardItem }>()
 

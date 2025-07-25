@@ -20,7 +20,7 @@ import {
   zhCN
 } from 'naive-ui'
 import { setTheme } from '@tauri-apps/api/app'
-import { usePegboardStore } from '@/repository/pegboard'
+import { usePegboardStore } from '@/store/pegboard'
 
 const osTheme = useOsTheme()
 const naiveTheme = computed(() => osTheme.value === 'dark' ? darkTheme : lightTheme)

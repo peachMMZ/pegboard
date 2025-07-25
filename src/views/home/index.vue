@@ -50,7 +50,7 @@ import {
   useMessage
 } from 'naive-ui'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import { PegboardItem, usePegboardStore } from '@/repository/pegboard'
+import { PegboardItem, usePegboardStore } from '@/store/pegboard'
 import { GridLayout } from '@/components/GridLayout'
 import { renderIcon } from '@/utils/renderer'
 import { getCurrentWindow, DragDropEvent } from '@tauri-apps/api/window'

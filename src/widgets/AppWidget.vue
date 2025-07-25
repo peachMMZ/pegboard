@@ -15,7 +15,7 @@ import { computed, CSSProperties } from 'vue'
 import {
   useThemeVars
 } from 'naive-ui'
-import { usePegboardStore, PegboardItem } from '@/repository/pegboard'
+import { usePegboardStore, PegboardItem } from '@/store/pegboard'
 import { lighten } from '@/utils/color'
 import DefaultIcon from '@/assets/vue.svg'
 

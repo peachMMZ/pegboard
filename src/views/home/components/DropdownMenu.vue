@@ -7,7 +7,7 @@
      :y="position.y"
      :options="options"
      :show="show"
-     @clickoutside="emits('clickoutside')"
+     @clickoutside="show = false"
      @select="handleDropdownSelect"
     />
   </div>
@@ -19,17 +19,15 @@ import {
   NDropdown,
   type DropdownOption
 } from 'naive-ui'
-import { usePegboardStore, PegboardItem } from '@/repository/pegboard'
+import { usePegboardStore, PegboardItem } from '@/store/pegboard'
 import { renderIcon } from '@/utils/renderer'
-import { Play, Trash } from 'lucide-vue-next'
+import { Play, Trash, Palette } from 'lucide-vue-next'
+import { randomColor } from '@/utils/color'
 
 const show = defineModel('show', { default: false })
 const props = defineProps<{
   item?: PegboardItem
   position: { x: number; y: number }
-}>()
-const emits = defineEmits<{
-  (e: 'clickoutside'): void
 }>()
 
 const pegboardStore = usePegboardStore()
@@ -42,6 +40,17 @@ const options = ref<DropdownOption[]>([
     action: () => {
       if (props.item) {
         pegboardStore.openApp(props.item)
+      }
+    }
+  },
+  { type: 'divider' },
+  {
+    label: '个性化',
+    key: 'style',
+    icon: renderIcon(Palette),
+    action: () => {
+      if (props.item) {
+        props.item.color = randomColor('hex')
       }
     }
   },

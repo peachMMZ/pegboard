@@ -8,6 +8,14 @@ export function lighten(hex: string, percent = 20) {
   return `rgb(${r},${g},${b})`
 }
 
-export function randomColor() {
-  return `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`
+export function randomColor(type: 'rgb' | 'rgba' | 'hex' = 'rgb') {
+  if (type === 'rgb') {
+    return `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`
+  }
+  if (type === 'rgba') {
+    return `rgba(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255},${Math.random()})`
+  }
+  if (type === 'hex') {
+    return `#${Math.random().toString(16).slice(2, 8)}`
+  }
 }

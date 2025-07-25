@@ -45,6 +45,7 @@ fn setup_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
             _ => {}
         })
         .show_menu_on_left_click(false)
+        .tooltip(app.package_info().name.clone())
         .build(app)?;
     Ok(())
 }

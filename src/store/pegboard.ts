@@ -47,8 +47,22 @@ export const usePegboardStore = defineStore('pegboard', () => {
     }, { deep: true })
   }
 
-  const findAvaiablePosition = (w: number, h: number, gridSize = 12) => {
-    const existingItems = pegboardList.value.flatMap((p) => p.items)
+  const newPegboard = (name?: string) => {
+    pegboardList.value.push({
+      id: Date.now(),
+      name,
+      items: []
+    })
+  }
+
+  const findAvaiablePosition = (pegboardId: number, w: number, h: number, cols = 12, rows = 6) => {
+    const existingItems = pegboardList.value.find((p) => p.id === pegboardId)?.items || []
+    const totalArea = cols * rows
+    const usedArea = existingItems.reduce((acc, item) => acc + item.w * item.h, 0)
+    const availableArea = totalArea - usedArea
+    if (availableArea < w * h) {
+      throw new Error('无可用位置')
+    }
     let x = 0
     let y = 0
     let found = false
@@ -63,7 +77,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
         found = true
       } else {
         x += w
-        if (x + w > gridSize) {
+        if (x + w > cols) {
           x = 0
           y += h
         }
@@ -72,7 +86,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
     return { x, y }
   }
 
-  const newAppItem = async (path: string, gridSize = 12) => {
+  const newAppItem = async (pegboardId: number, path: string) => {
     const existingItems = pegboardList.value.flatMap((p) => p.items)
     if (existingItems.some((i) => i.path === path)) {
       return Promise.reject('已存在')
@@ -81,8 +95,16 @@ export const usePegboardStore = defineStore('pegboard', () => {
     // 找到可用的位置
     const w = 1
     const h = 1
+    let posX = 0
+    let posY = 0
 
-    const { x: posX, y: posY } = findAvaiablePosition(w, h, gridSize)
+    try {
+      const { x, y } = findAvaiablePosition(pegboardId, w, h)
+      posX = x
+      posY = y
+    } catch (error) {
+      return Promise.reject(error)
+    }
     const name = path.split('\\').pop()?.split('.')[0] || 'unknown'
     const fastAverageColor = new FastAverageColor()
     const iconDir = await join(await appDataDir(), 'icon', name)
@@ -133,6 +155,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
   return {
     pegboardList,
     init,
+    newPegboard,
     newAppItem,
     addItem,
     removeItem,

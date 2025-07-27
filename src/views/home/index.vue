@@ -23,15 +23,13 @@
         :page-count="pegboardStore.pegboardList.length"
         @update:page="(page) => goToIndex(page - 1)"
       >
-        <template #prev>
-          <NButton text :render-icon="renderIcon(ChevronLeft)"></NButton>
+        <template #prev></template>
+        <template #label="{ type, active }">
+          <div v-if="type === 'page'">
+            <div class="w-6 h-1 rounded-full" :style="{ backgroundColor: active ? themeVars.primaryColor : themeVars.textColor3 }"></div>
+          </div>
         </template>
-        <template #label="{ type }">
-          <span v-if="type === 'page'">●</span>
-        </template>
-        <template #next>
-          <NButton text :render-icon="renderIcon(ChevronRight)"></NButton>
-        </template>
+        <template #next></template>
       </NPagination>
     </div>
     <DropdownMenu
@@ -45,14 +43,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import {
-  NButton,
   NPagination,
-  useMessage
+  useMessage,
+  useThemeVars
 } from 'naive-ui'
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { PegboardItem, usePegboardStore } from '@/store/pegboard'
 import { GridLayout } from '@/components/GridLayout'
-import { renderIcon } from '@/utils/renderer'
 import { getCurrentWindow, DragDropEvent } from '@tauri-apps/api/window'
 import { Event } from '@tauri-apps/api/event'
 import AppWidget from '@/widgets/AppWidget.vue'
@@ -60,6 +56,7 @@ import ClockWidget from '@/widgets/ClockWidget.vue'
 import DropdownMenu from './components/DropdownMenu.vue'
 
 const message = useMessage()
+const themeVars = useThemeVars()
 
 const pegboardStore = usePegboardStore()
 
@@ -98,7 +95,7 @@ async function onDragDrop(event: Event<DragDropEvent>) {
     const paths = event.payload.paths
     if (paths && paths.length > 0) {
       paths.forEach((path) => {
-        pegboardStore.newAppItem(path).then((item) => {
+        pegboardStore.newAppItem(currentPegboard.value.id, path).then((item) => {
           pegboardStore.addItem(currentPegboard.value.id, item)
         }).catch((err) => {
           message.error(err)
@@ -162,7 +159,7 @@ onUnmounted(() => {
 .slide-next-leave-active,
 .slide-prev-enter-active,
 .slide-prev-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .active-effect {

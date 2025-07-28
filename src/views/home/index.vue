@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full flex flex-col p-2 overflow-hidden">
+  <div id="pegboard-container" class="h-full w-full flex flex-col p-2 overflow-hidden">
     <Transition :name="`slide-${currentDirection}`" mode="out-in" :duration="150">
       <div v-if="currentPegboard" :key="currentPegboard.id" class="flex-1 w-full overflow-hidden">
         <GridLayout
@@ -7,8 +7,9 @@
           :gap-x="2"
           :gap-y="2"
           collision
-          @drag-active="handleDragActive"
-          @drag-cancel="handleDragCancel"
+          @drag-start="handleDragStart"
+          @drag-end="handleDragEnd"
+          @drag-cancel="handleDragEnd"
         >
           <template #item="{ item, index }">
             <AppWidget v-if="item.type === 'app'" :class="getItemClass(index)" :item="item" @contextmenu="(e: MouseEvent) => handleTileContextMenu(e, item)" />
@@ -21,7 +22,7 @@
       <NPagination
         :current="currentIndex + 1"
         :page-count="pegboardStore.pegboardList.length"
-        @update:page="(page) => goToIndex(page - 1)"
+        @update:page="(page) => pegboardStore.goToIndex(page - 1)"
       >
         <template #prev></template>
         <template #label="{ type, active }">
@@ -32,6 +33,7 @@
         <template #next></template>
       </NPagination>
     </div>
+    <MiniView to="#pegboard-container" />
     <DropdownMenu
       v-model:show="dropdownShow"
       :item="selectedItem"
@@ -41,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import {
   NPagination,
   useMessage,
@@ -51,6 +53,8 @@ import { PegboardItem, usePegboardStore } from '@/store/pegboard'
 import { GridLayout } from '@/components/GridLayout'
 import { getCurrentWindow, DragDropEvent } from '@tauri-apps/api/window'
 import { Event } from '@tauri-apps/api/event'
+import { storeToRefs } from 'pinia'
+import MiniView from './components/MiniView.vue'
 import AppWidget from '@/widgets/AppWidget.vue'
 import ClockWidget from '@/widgets/ClockWidget.vue'
 import DropdownMenu from './components/DropdownMenu.vue'
@@ -59,29 +63,13 @@ const message = useMessage()
 const themeVars = useThemeVars()
 
 const pegboardStore = usePegboardStore()
-
-const currentIndex = ref(0)
-const currentDirection = ref<'prev' | 'next'>('next')
-const currentPegboard = computed(() => {
-  return pegboardStore.pegboardList[currentIndex.value]
-})
-
-function goToIndex(index: number) {
-  // 记录当前导航方向
-  currentDirection.value = index > currentIndex.value ? 'next' : 'prev'
-  const maxIndex = pegboardStore.pegboardList.length - 1
-  if (index === 0) {
-    currentIndex.value = Math.max(index, 0)
-  } else {
-    currentIndex.value = Math.min(index, maxIndex)
-  }
-}
+const { currentIndex, currentPegboard, currentDirection } = storeToRefs(pegboardStore)
 
 const dragStates = ref<{ [key: number]: boolean }>({})
-function handleDragActive(_item: unknown, index: number) {
+function handleDragStart(_item: unknown, index: number) {
   dragStates.value[index] = true
 }
-function handleDragCancel() {
+function handleDragEnd() {
   dragStates.value = {}
 }
 function getItemClass(index: number) {

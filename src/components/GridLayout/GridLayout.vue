@@ -30,14 +30,14 @@ const {
   collision = false,
   gapX = 0,
   gapY = 0,
-  itemClass = undefined,
   dragTimeout = 200
 } = defineProps<GridLayoutProps>()
 
 const items = defineModel<T[]>('value', { default: [] })
 const emits = defineEmits<{
   (e: 'update', item: GridLayoutItem): void,
-  (e: 'drag-active', item: GridLayoutItem, index: number): void,
+  (e: 'drag-start', item: GridLayoutItem, index: number): void,
+  (e: 'drag-end'): void,
   (e: 'drag-cancel'): void,
 }>()
 
@@ -145,7 +145,8 @@ const startLongPress = (e: MouseEvent) => {
     const gridItem = (e.target as HTMLElement).closest('.grid-item')
     if (gridItem) {
       const index = Array.from(gridItem.parentNode?.children || []).indexOf(gridItem)
-      emits('drag-active', items.value[index], index)
+      const item = items.value[index]
+      emits('drag-start', item, index)
     }
     isDraggable.value = true
   }, dragTimeout)
@@ -191,6 +192,7 @@ onMounted(() => {
           const index = Array.from(target.parentNode.children).indexOf(target)
           updateItem(target, index)
           isDraggable.value = false
+          emits('drag-end')
         }
       }
     })

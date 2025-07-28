@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { GridLayoutItem } from '@/components/GridLayout'
 import { convertFileSrc } from '@tauri-apps/api/core'
@@ -29,6 +29,12 @@ export interface PegboardItem extends GridLayoutItem {
 export const usePegboardStore = defineStore('pegboard', () => {
   const store = new LazyStore('pegboard.json')
   const pegboardList = ref<Pegboard[]>([])
+  const currentIndex = ref(0)
+  const currentPegboard = computed(() => {
+    return pegboardList.value[currentIndex.value]
+  })
+  const currentDirection = ref<'prev' | 'next'>('next')
+  const miniViewVisible = ref(false)
 
   const init = async () => {
     const data = await store.get<Pegboard[]>('pegboardList')
@@ -47,12 +53,33 @@ export const usePegboardStore = defineStore('pegboard', () => {
     }, { deep: true })
   }
 
+  const goToIndex = (index: number) => {
+    // 记录当前导航方向
+    currentDirection.value = index > currentIndex.value ? 'next' : 'prev'
+    const maxIndex = pegboardList.value.length - 1
+    if (index === 0) {
+      currentIndex.value = Math.max(index, 0)
+    } else {
+      currentIndex.value = Math.min(index, maxIndex)
+    }
+  }
+
   const newPegboard = (name?: string) => {
     pegboardList.value.push({
       id: Date.now(),
-      name,
+      name: name || `新建${pegboardList.value.length + 1}`,
       items: []
     })
+  }
+
+  const removePegboard = (id: Pegboard['id']) => {
+    const index = pegboardList.value.findIndex((p) => p.id === id)
+    const result = pegboardList.value.filter((p) => p.id !== id)
+    if (result.length === 0) {
+      throw new Error('至少保留一个')
+    }
+    pegboardList.value = result
+    currentIndex.value = index - 1
   }
 
   const findAvaiablePosition = (pegboardId: number, w: number, h: number, cols = 12, rows = 6) => {
@@ -154,8 +181,14 @@ export const usePegboardStore = defineStore('pegboard', () => {
 
   return {
     pegboardList,
+    currentIndex,
+    currentPegboard,
+    currentDirection,
+    miniViewVisible,
     init,
+    goToIndex,
     newPegboard,
+    removePegboard,
     newAppItem,
     addItem,
     removeItem,

@@ -3,6 +3,7 @@
     <NDropdown
      placement="bottom-start"
      trigger="manual"
+     size="small"
      :x="position.x"
      :y="position.y"
      :options="options"
@@ -21,7 +22,7 @@ import {
 } from 'naive-ui'
 import { usePegboardStore, PegboardItem } from '@/store/pegboard'
 import { renderIcon } from '@/utils/renderer'
-import { Play, Trash, Palette } from 'lucide-vue-next'
+import { Play, Trash, Palette, Move } from 'lucide-vue-next'
 import { randomColor } from '@/utils/color'
 
 const show = defineModel('show', { default: false })
@@ -52,6 +53,14 @@ const options = ref<DropdownOption[]>([
       if (props.item) {
         props.item.color = randomColor('hex')
       }
+    }
+  },
+  {
+    label: '移动到',
+    key: 'move',
+    icon: renderIcon(Move),
+    action: () => {
+
     }
   },
   { type: 'divider' },

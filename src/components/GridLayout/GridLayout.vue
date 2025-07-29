@@ -11,7 +11,7 @@
     >
       <slot name="item" :item="item" :index="index">
         <!-- 默认内容 -->
-        <div class="resize-handle"></div>
+        <div v-if="resizable" class="resize-handle"></div>
       </slot>
     </div>
   </div>
@@ -20,6 +20,7 @@
 <script setup lang="ts" generic="T extends GridLayoutItem">
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import interact from 'interactjs'
+import { Interactable } from '@interactjs/core/Interactable'
 import { GridLayoutProps, GridLayoutItem } from './types'
 
 const {
@@ -30,7 +31,9 @@ const {
   collision = false,
   gapX = 0,
   gapY = 0,
-  dragTimeout = 200
+  dragTimeout = 200,
+  draggable = true,
+  resizable = true
 } = defineProps<GridLayoutProps>()
 
 const items = defineModel<T[]>('value', { default: [] })
@@ -138,6 +141,7 @@ let longPressTimer: NodeJS.Timeout | null = null
 let isDraggable = ref(false)
 
 const startLongPress = (e: MouseEvent) => {
+  if (!draggable) return
   if (longPressTimer) {
     clearTimeout(longPressTimer)
   }
@@ -160,7 +164,9 @@ const cancelLongPress = () => {
 }
 
 onMounted(() => {
-  const dragController = interact('.grid-item')
+  let dragController: Interactable
+  if (draggable) {
+    dragController = interact('.grid-item')
     .draggable({
       inertia: false,
       cursorChecker: () => '',
@@ -196,7 +202,9 @@ onMounted(() => {
         }
       }
     })
-  interact('.grid-item')
+  }
+  if (resizable) {
+    interact('.grid-item')
     .resizable({
       edges: { left: false, top: false, right: true, bottom: true },
       modifiers: [
@@ -225,6 +233,7 @@ onMounted(() => {
         }
       }
     })
+  }
   watchEffect(() => {
     // 容器尺寸改变时，重新计算布局
     if (!containerRef.value) return
@@ -236,7 +245,7 @@ onMounted(() => {
       }
     })
     // 拖拽同步
-    if (isDraggable.value) {
+    if (dragController && isDraggable.value && draggable) {
       dragController.draggable({ enabled: true })
     }
   })

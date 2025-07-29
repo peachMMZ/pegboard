@@ -16,7 +16,7 @@ export interface Pegboard {
   items: PegboardItem[]
 }
 
-export type PegboardItemType = 'app' | 'folder' | 'file' | 'clock' | 'image'
+export type PegboardItemType = 'launcher' | 'folder' | 'file' | 'clock' | 'image'
 
 export interface PegboardItem extends GridLayoutItem {
   name?: string
@@ -110,7 +110,9 @@ export const usePegboardStore = defineStore('pegboard', () => {
         item.x = x
         item.y = y
         targetPegboard.items.push(item)
-        currentPegboard.value.items = currentPegboard.value.items.filter((i) => i.id !== item.id)
+        if (targetPegboardId !== currentPegboard.value.id) {
+          currentPegboard.value.items = currentPegboard.value.items.filter((i) => i.id !== item.id)
+        }
       } catch (error) {
         console.error('移动项目失败', error)
       }
@@ -177,7 +179,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
     const item: PegboardItem = {
       id: Date.now(),
       name,
-      type: 'app',
+      type: 'launcher',
       x: posX,
       y: posY,
       w,
@@ -210,7 +212,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
   }
 
   const openApp = async (item: PegboardItem) => {
-    if (item.type === 'app' && item.path) {
+    if (item.type === 'launcher' && item.path) {
       await openPath(item.path)
     }
   }

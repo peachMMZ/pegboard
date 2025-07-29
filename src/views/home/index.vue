@@ -12,8 +12,7 @@
           @drag-cancel="handleDragEnd"
         >
           <template #item="{ item, index }">
-            <AppWidget v-if="item.type === 'app'" :class="getItemClass(index)" :item="item" @contextmenu="(e: MouseEvent) => handleTileContextMenu(e, item)" />
-            <ClockWidget v-else-if="item.type === 'clock'" :class="getItemClass(index)" :item="item" />
+            <Widget :type="item.type" :class="getItemClass(index)" :item="item" @contextmenu="(e: MouseEvent) => handleTileContextMenu(e, item)" />
           </template>
         </GridLayout>
       </div>
@@ -55,8 +54,7 @@ import { getCurrentWindow, DragDropEvent } from '@tauri-apps/api/window'
 import { Event } from '@tauri-apps/api/event'
 import { storeToRefs } from 'pinia'
 import MiniView from './components/MiniView.vue'
-import AppWidget from '@/widgets/AppWidget.vue'
-import ClockWidget from '@/widgets/ClockWidget.vue'
+import { Widget } from '@/widgets'
 import DropdownMenu from './components/DropdownMenu.vue'
 
 const message = useMessage()

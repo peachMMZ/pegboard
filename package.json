@@ -30,6 +30,7 @@
     "@tauri-apps/cli": "^2",
     "@types/node": "^24.0.13",
     "@vitejs/plugin-vue": "^5.2.1",
+    "es-toolkit": "^1.39.8",
     "fast-average-color": "^9.5.0",
     "naive-ui": "^2.42.0",
     "tailwindcss": "^4.1.11",

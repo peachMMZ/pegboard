@@ -1,15 +1,29 @@
 <template>
-  <div class="h-full p-2">
-    <NTabs class="h-full" placement="left">
+  <div class="h-full p-2 flex flex-col">
+    <NTabs class="h-full flex-1" placement="left">
       <NTabPane v-for="tab in tabs" :tab="tab.label" :name="tab.key">
-        <div v-if="tab.components">
-          <NGrid :gutter="12">
-            <NGridItem v-for="component in tab.components" :span="8">
-              <NCard :title="component.label" :bordered="false">
-                <component :is="component.component" v-bind="component.props"></component>
+        <div v-if="tab.items">
+          <GridLayout v-model:value="tab.items" :draggable="false" :resizable="false">
+            <template #item="{ item }">
+              <NCard :bordered="false">
+                <Widget :type="item.type" v-bind="{ item }"></Widget>
+                <template #footer>
+                  <div class="flex justify-between items-center">
+                    <span>{{ item.label }}</span>
+                    <div>
+                      <NButton
+                        type="primary"
+                        quaternary
+                        size="small"
+                        :render-icon="renderIcon(Plus)"
+                        @click="addItem(item)"
+                      >添加</NButton>
+                    </div>
+                  </div>
+                </template>
               </NCard>
-            </NGridItem>
-          </NGrid>
+            </template>
+          </GridLayout>
         </div>
       </NTabPane>
     </NTabs>
@@ -17,39 +31,30 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent } from 'vue'
 import {
   NTabs,
   NTabPane,
-  NGrid,
-  NGridItem,
-  NCard
+  NCard,
+  NButton,
 } from 'naive-ui'
+import { Plus } from 'lucide-vue-next'
+import { GridLayout } from '@/components/GridLayout'
+import { renderIcon } from '@/utils/renderer'
+import { Widget } from '@/widgets'
+import { tabs } from './data'
+import { cloneDeep } from 'es-toolkit/object'
+import { useRouter } from 'vue-router'
+import { usePegboardStore, PegboardItem } from '@/store/pegboard'
 
-const tabs = [
-  {
-    label: '内置',
-    key: 'builtin',
-    components: [
-      {
-        label: '基础时钟',
-        key: 'builtin-clock',
-        component: defineAsyncComponent(() => import('@/widgets/ClockWidget.vue')),
-        props: {
-          item: {
-            id: 'builtin-clock',
-            type: 'clock' as any,
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1
-          }
-        }
-      }
-    ]
-  },
-  { label: '官方', key: 'official' },
-  { label: '时钟', key: 'clock' }
-]
+const router = useRouter()
+const pegboardStore = usePegboardStore()
+
+function addItem(item: PegboardItem) {
+  const newItem = cloneDeep(item)
+  router.push({ name: 'home' }).then(() => {
+    pegboardStore.movingItems.push(newItem)
+    pegboardStore.miniViewVisible = true
+  })
+}
 </script>
 <style scoped></style>

@@ -6,7 +6,7 @@
     <div class="basis-1/2"></div>
     <div class="basis-1/4 flex justify-end">
       <NButton v-if="isHomePage()" quaternary :render-icon="renderIcon(Columns)" @click="openMiniView"></NButton>
-      <NButton quaternary :render-icon="renderIcon(LayoutDashboard)" @click="goMarketplace"></NButton>
+      <NButton quaternary :render-icon="renderIcon(ShoppingBag)" @click="goMarketplace"></NButton>
       <NButton quaternary :render-icon="renderIcon(Settings)"></NButton>
     </div>
   </div>
@@ -16,7 +16,7 @@
 import {
   NButton
 } from 'naive-ui'
-import { Settings, LayoutDashboard, Columns } from 'lucide-vue-next'
+import { Settings, ShoppingBag, Columns } from 'lucide-vue-next'
 import { renderIcon } from '@/utils/renderer'
 import { useRouter } from 'vue-router'
 import { usePegboardStore } from '@/store/pegboard'

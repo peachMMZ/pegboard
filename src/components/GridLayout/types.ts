@@ -8,7 +8,9 @@ export interface GridLayoutProps {
   gapY?: number
   border?: number
   itemClass?: string
+  draggable?: boolean
   dragTimeout?: number
+  resizable?: boolean
 }
 
 export interface GridLayoutItem {

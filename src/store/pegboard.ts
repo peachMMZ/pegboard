@@ -11,7 +11,8 @@ import { remove } from '@tauri-apps/plugin-fs'
 
 export interface Pegboard {
   id: number
-  name?: string
+  name: string
+  sort?: number
   items: PegboardItem[]
 }
 
@@ -35,6 +36,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
   })
   const currentDirection = ref<'prev' | 'next'>('next')
   const miniViewVisible = ref(false)
+  const movingItems = ref<PegboardItem[]>([])
 
   const init = async () => {
     const data = await store.get<Pegboard[]>('pegboardList')
@@ -53,6 +55,17 @@ export const usePegboardStore = defineStore('pegboard', () => {
     }, { deep: true })
   }
 
+  const sortPegboard = (direction: 'asc' | 'desc' = 'asc') => {
+    const preId = currentPegboard.value.id
+    pegboardList.value.sort((a, b) => {
+      return direction === 'asc' ? (a.sort ?? Infinity) - (b.sort ?? Infinity) : (b.sort ?? Infinity) - (a.sort ?? Infinity)
+    })
+    const index = pegboardList.value.findIndex((p) => p.id === preId)
+    if (index !== -1) {
+      currentIndex.value = index
+    }
+  }
+
   const goToIndex = (index: number) => {
     // 记录当前导航方向
     currentDirection.value = index > currentIndex.value ? 'next' : 'prev'
@@ -68,6 +81,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
     pegboardList.value.push({
       id: Date.now(),
       name: name || `新建${pegboardList.value.length + 1}`,
+      sort: pegboardList.value.length + 1,
       items: []
     })
   }
@@ -80,6 +94,28 @@ export const usePegboardStore = defineStore('pegboard', () => {
     }
     pegboardList.value = result
     currentIndex.value = index - 1
+  }
+
+  const moveItemToPegboard = (targetPegboardId: Pegboard['id']) => {
+    if (movingItems.value.length === 0) {
+      return
+    }
+    const targetPegboard = pegboardList.value.find((p) => p.id === targetPegboardId)
+    if (!targetPegboard) {
+      return
+    }
+    movingItems.value.forEach((item) => {
+      try {
+        const { x, y } = findAvaiablePosition(targetPegboardId, item.w, item.h)
+        item.x = x
+        item.y = y
+        targetPegboard.items.push(item)
+        currentPegboard.value.items = currentPegboard.value.items.filter((i) => i.id !== item.id)
+      } catch (error) {
+        console.error('移动项目失败', error)
+      }
+    })
+    movingItems.value = []
   }
 
   const findAvaiablePosition = (pegboardId: number, w: number, h: number, cols = 12, rows = 6) => {
@@ -185,10 +221,13 @@ export const usePegboardStore = defineStore('pegboard', () => {
     currentPegboard,
     currentDirection,
     miniViewVisible,
+    movingItems,
     init,
+    sortPegboard,
     goToIndex,
     newPegboard,
     removePegboard,
+    moveItemToPegboard,
     newAppItem,
     addItem,
     removeItem,

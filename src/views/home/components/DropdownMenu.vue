@@ -60,7 +60,10 @@ const options = ref<DropdownOption[]>([
     key: 'move',
     icon: renderIcon(Move),
     action: () => {
-
+      if (props.item) {
+        pegboardStore.movingItems.push(props.item)
+        pegboardStore.miniViewVisible = true
+      }
     }
   },
   { type: 'divider' },

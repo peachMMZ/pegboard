@@ -12,7 +12,7 @@
           @drag-cancel="handleDragEnd"
         >
           <template #item="{ item, index }">
-            <Widget :type="item.type" :class="getItemClass(index)" :item="item" @contextmenu="(e: MouseEvent) => handleTileContextMenu(e, item)" />
+            <Widget :item="item" :class="getItemClass(index)" @contextmenu="(e: MouseEvent) => handleTileContextMenu(e, item)" />
           </template>
         </GridLayout>
       </div>

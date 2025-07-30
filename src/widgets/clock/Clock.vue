@@ -1,11 +1,12 @@
 <template>
   <div
-    class="w-full h-full p-4 rounded-lg flex items-center justify-center text-xl font-bold"
-    :style="containerStyle"><!-- 使用Tailwind布局和主题背景色 -->
+    class="w-full h-full p-4 flex items-center justify-center text-xl font-bold"
+    :style="containerStyle">
     <!-- 主时钟显示 -->
     <div class="text-center">
       <div class="time">
-        {{ formattedTime }}
+        <!-- 将每个字符包裹在固定宽度的span中 -->
+        <span v-for="(char, index) in timeChars" :key="index" class="w-8 text-center inline-block">{{ char }}</span>
       </div>
       <div class="date">{{ formattedDate }}</div>
     </div>
@@ -23,6 +24,7 @@ const themeVars = useThemeVars()
 
 const containerStyle = computed(() => ({
   backgroundColor: themeVars.value.primaryColor,
+  borderRadius: themeVars.value.borderRadius,
   color: themeVars.value.textColor1,
 }))
 
@@ -35,18 +37,26 @@ const formattedTime = computed(() => {
   return currentTime.value.toLocaleTimeString('zh-CN', {
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
     hour12: false
   })
 })
 
+// 拆分时间字符为数组
+const timeChars = computed(() => {
+  return formattedTime.value.split('')
+})
+
 // 格式化日期
 const formattedDate = computed(() => {
-  return currentTime.value.toLocaleDateString('zh-CN', {
+  const date = currentTime.value.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit',
+    day: '2-digit'
   }).replace(/\//g, '-')
+  const weekday = currentTime.value.toLocaleDateString('zh-CN', {
+    weekday: 'short'
+  })
+  return `${date} ${weekday}`
 })
 
 onMounted(() => {
@@ -63,14 +73,13 @@ onUnmounted(() => {
 
 <style scoped>
 .time {
-  font-family: 'Digital-1', monospace;
-  font-size: 2.5rem;
+  font-family: 'Digital-1';
+  font-size: 4rem;
   letter-spacing: 2px;
 }
 
 .date {
-  font-family: 'Digital-1', monospace;
-  font-size: 0.9rem;
+  font-family: 'Digital-1';
   margin-top: 0.5rem;
   letter-spacing: 1px;
 }

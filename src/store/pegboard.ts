@@ -21,6 +21,8 @@ export type PegboardItemType = 'launcher' | 'folder' | 'file' | 'clock' | 'image
 export interface PegboardItem extends GridLayoutItem {
   name?: string
   type: PegboardItemType
+  component?: string
+  props?: Record<string, any>
   iconPath?: string
   iconUrl?: string
   color?: string

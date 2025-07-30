@@ -21,6 +21,7 @@ export const tabs: MarketplaceTab[] = [
         label: '基础时钟',
         key: 'builtin-clock',
         type: 'clock',
+        component: '/clock/Clock.vue',
         x: 0,
         y: 0,
         w: 4,

@@ -10,3 +10,9 @@ export const widgetTypeMapping: Record<PegboardItemType, Component | null> = {
   clock: defineAsyncComponent(() => import('@/widgets/clock/Clock.vue')),
   image: null,
 }
+
+const widgets = import.meta.glob('@/widgets/**/*.vue')
+export function getWidgetComponent(path: string) {
+  const getter = widgets[`/src/widgets${path}`] as () => Promise<Component>
+  return defineAsyncComponent(getter)
+}

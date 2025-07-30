@@ -7,6 +7,9 @@ export async function setupWindow() {
     return
   }
   const currentWindow = getCurrentWindow()
+  if (currentWindow.label !== 'main') {
+    return
+  }
   const { x } = await currentWindow.outerPosition()
   const windowSize = await currentWindow.innerSize()
   const bottom = monitor.workArea.size.height - windowSize.height

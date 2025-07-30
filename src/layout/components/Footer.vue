@@ -7,7 +7,7 @@
     <div class="basis-1/4 flex justify-end">
       <NButton v-if="isHomePage()" quaternary :render-icon="renderIcon(Columns)" @click="openMiniView"></NButton>
       <NButton quaternary :render-icon="renderIcon(ShoppingBag)" @click="goMarketplace"></NButton>
-      <NButton quaternary :render-icon="renderIcon(Settings)"></NButton>
+      <NButton quaternary :render-icon="renderIcon(Settings)" @click="goToSetting"></NButton>
     </div>
   </div>
 </template>
@@ -33,6 +33,9 @@ const isHomePage = () => {
 }
 const openMiniView = () => {
   pegboardStore.miniViewVisible = true
+}
+const goToSetting = () => {
+  router.push({ name: 'setting' })
 }
 </script>
 <style scoped></style>

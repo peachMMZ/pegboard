@@ -97,7 +97,7 @@ function getPanelStyle(index: number): CSSProperties {
   return {
     border: `2px solid ${borderColor}`,
     borderRadius: themeVars.value.borderRadius,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: themeVars.value.baseColor,
     cursor: 'pointer'
   }
 }

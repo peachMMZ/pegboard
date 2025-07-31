@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { useOsTheme, type GlobalThemeOverrides } from 'naive-ui'
 import { LazyStore } from '@tauri-apps/plugin-store'
 import { setTheme } from '@tauri-apps/api/app'
+import { deriveColorStates, isHex } from '@/utils/color'
 
 export type Theme = 'light' | 'dark'
 
@@ -44,11 +45,34 @@ export const useThemeStore = defineStore('theme', () => {
     }, { deep: true })
   }
 
+  const setPrimaryColor = (color: string) => {
+    if (!isHex(color)) {
+      throw new Error(`无效的Hex颜色格式: ${color}`)
+    }
+    const { base, hover, pressed, suppl } = deriveColorStates(color)
+    if (!themeOverride.value.common) {
+      themeOverride.value.common = {}
+    }
+    themeOverride.value.common.primaryColor = base
+    themeOverride.value.common.primaryColorHover = hover
+    themeOverride.value.common.primaryColorPressed = pressed
+    themeOverride.value.common.primaryColorSuppl = suppl
+  }
+
+  const setFontSize = (size: number) => {
+    if (!themeOverride.value.common) {
+      themeOverride.value.common = {}
+    }
+    themeOverride.value.common.fontSize = `${size}px`
+  }
+
   return {
     theme,
     osTheme,
     followOsTheme,
     themeOverride,
-    init
+    init,
+    setPrimaryColor,
+    setFontSize
   }
 })

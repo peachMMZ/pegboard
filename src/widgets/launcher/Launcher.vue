@@ -95,9 +95,7 @@ const isMini = computed(() => {
   left: 14px;
   bottom: 12px;
   z-index: 2;
-  font-size: 1.08rem;
-  font-weight: 500;
-  color: #fff;
+  font-size: medium;
   text-shadow: 0 1px 2px rgba(0,0,0,0.10);
   max-width: 70%;
   white-space: nowrap;

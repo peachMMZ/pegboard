@@ -1,5 +1,6 @@
 <template>
   <NConfigProvider :theme-overrides="themeStore.themeOverride" :theme="naiveTheme" :locale="zhCN">
+    <NGlobalStyle />
     <NMessageProvider>
       <div class="h-screen">
         <RouterView />
@@ -12,6 +13,7 @@
 import { computed, onMounted } from 'vue'
 import {
   NConfigProvider,
+  NGlobalStyle,
   NMessageProvider,
   lightTheme,
   darkTheme,

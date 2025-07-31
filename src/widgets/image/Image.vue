@@ -10,11 +10,12 @@
 </template>
 
 <script setup lang="ts" generic="T extends PegboardItem">
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
 import { useThemeVars } from 'naive-ui'
 import { PegboardItem } from '@/store/pegboard'
+import { convertFileSrc } from '@tauri-apps/api/core'
 
-defineProps<{
+const props = defineProps<{
   item: T,
 }>()
 
@@ -23,6 +24,12 @@ const themeVars = useThemeVars()
 const containerStyle = computed(() => ({
   borderRadius: themeVars.value.borderRadius,
 }))
+
+watchEffect(() => {
+  if (props.item.props && props.item.props.path) {
+    props.item.props.src.value = convertFileSrc(props.item.props.path.value)
+  }
+})
 </script>
 <style scoped>
 </style>

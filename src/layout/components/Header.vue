@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-between items-center">
     <div class="basis-1/4">
-      <NButton quaternary :render-icon="renderIcon(ChevronLeft)" @click="$router.back()"></NButton>
+      <NButton type="primary" quaternary :render-icon="renderIcon(ChevronLeft)" @click="$router.back()"></NButton>
     </div>
     <div class="basis-1/2 flex justify-center">
       <NInput size="small">

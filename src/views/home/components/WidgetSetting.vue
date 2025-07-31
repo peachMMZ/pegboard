@@ -9,7 +9,7 @@
       <div v-if="item && item.props">
         <NForm>
           <NFormItem v-for="(val, key) in item.props" :key="key" :label="val.label">
-            <component :is="getComponentByType(val.type)" v-model:value="val.value"></component>
+            <DynamicPropEditor :prop="val" />
           </NFormItem>
         </NForm>
       </div>
@@ -22,25 +22,14 @@ import {
   NModal,
   NForm,
   NFormItem,
-  NInput,
-  NInputNumber
 } from 'naive-ui'
-import { PegboardItem, PegboardItemPropType } from '@/store/pegboard'
+import { PegboardItem } from '@/store/pegboard'
+import { DynamicPropEditor } from '@/components/DynamicPropEditor'
 
 const show = defineModel('show', { default: false })
 defineProps<{
   item?: PegboardItem
 }>()
 
-function getComponentByType(type: PegboardItemPropType) {
-  switch (type) {
-    case 'string':
-      return NInput
-    case 'number':
-      return NInputNumber
-    default:
-      return NInput
-  }
-}
 </script>
 <style scoped></style>

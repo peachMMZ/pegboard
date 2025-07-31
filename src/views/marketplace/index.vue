@@ -46,6 +46,7 @@ const pegboardStore = usePegboardStore()
 
 function addItem(item: PegboardItem) {
   const newItem = cloneDeep(item)
+  newItem.id = Date.now()
   router.push({ name: 'home' }).then(() => {
     pegboardStore.movingItems.push(newItem)
     pegboardStore.miniViewVisible = true

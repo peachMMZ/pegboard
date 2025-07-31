@@ -35,8 +35,12 @@
     <MiniView to="#pegboard-container" />
     <DropdownMenu
       v-model:show="dropdownShow"
-      :item="selectedItem"
+      :options="dropdownOptions"
       :position="dropdownPosition"
+    />
+    <WidgetSetting
+      v-model:show="settingVisible"
+      :item="selectedItem"
     />
   </div>
 </template>
@@ -53,9 +57,11 @@ import { GridLayout } from '@/components/GridLayout'
 import { getCurrentWindow, DragDropEvent } from '@tauri-apps/api/window'
 import { Event } from '@tauri-apps/api/event'
 import { storeToRefs } from 'pinia'
+import { useDropdownMenu } from './composables/useDropdownMenu'
 import MiniView from './components/MiniView.vue'
 import { Widget } from '@/widgets'
 import DropdownMenu from './components/DropdownMenu.vue'
+import WidgetSetting from './components/WidgetSetting.vue'
 
 const message = useMessage()
 const themeVars = useThemeVars()
@@ -103,6 +109,8 @@ function handleTileContextMenu(e: MouseEvent, item: PegboardItem) {
     dropdownShow.value = true
   })
 }
+
+const { options: dropdownOptions, settingVisible } = useDropdownMenu(selectedItem)
 
 let unListen: () => void
 onMounted(async () => {

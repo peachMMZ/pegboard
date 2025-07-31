@@ -1,5 +1,5 @@
 <template>
-  <component :is="widgetComponent" :item="item" v-bind="item.props" />
+  <component :is="widgetComponent" :item="item" />
 </template>
 
 <script setup lang="ts">

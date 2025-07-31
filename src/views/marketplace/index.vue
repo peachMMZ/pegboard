@@ -1,27 +1,23 @@
 <template>
   <div class="h-full p-2 flex flex-col">
     <NTabs class="h-full flex-1" placement="left">
-      <NTabPane v-for="tab in tabs" :tab="tab.label" :name="tab.key">
-        <div v-if="tab.items">
+      <NTabPane class="h-full" v-for="tab in tabs" :tab="tab.label" :name="tab.key">
+        <div v-if="tab.items" class="h-full">
           <GridLayout v-model:value="tab.items" :draggable="false" :resizable="false">
             <template #item="{ item }">
-              <NCard :bordered="false">
-                <Widget :type="item.type" v-bind="{ item }"></Widget>
-                <template #footer>
-                  <div class="flex justify-between items-center">
-                    <span>{{ item.label }}</span>
-                    <div>
-                      <NButton
-                        type="primary"
-                        quaternary
-                        size="small"
-                        :render-icon="renderIcon(Plus)"
-                        @click="addItem(item)"
-                      >添加</NButton>
-                    </div>
-                  </div>
-                </template>
-              </NCard>
+              <Widget :type="item.type" v-bind="{ item }"></Widget>
+              <div class="flex justify-between items-center mt-2">
+                <span>{{ item.label }}</span>
+                <div>
+                  <NButton
+                    type="primary"
+                    quaternary
+                    size="small"
+                    :render-icon="renderIcon(Plus)"
+                    @click="addItem(item)"
+                  >添加</NButton>
+                </div>
+              </div>
             </template>
           </GridLayout>
         </div>
@@ -34,7 +30,6 @@
 import {
   NTabs,
   NTabPane,
-  NCard,
   NButton,
 } from 'naive-ui'
 import { Plus } from 'lucide-vue-next'

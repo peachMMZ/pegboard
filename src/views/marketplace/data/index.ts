@@ -27,6 +27,19 @@ export const tabs: MarketplaceTab[] = [
         w: 4,
         h: 2,
       },
+      {
+        id: 'builtin-image',
+        label: '图片',
+        key: 'builtin-image',
+        type: 'image',
+        x: 4,
+        y: 0,
+        w: 4,
+        h: 2,
+        props: {
+          src: { label: '图片地址', type: 'string', value: '/image/Luffy.png' }
+        }
+      }
     ]
   },
   { label: '官方', key: 'official', items: [] },

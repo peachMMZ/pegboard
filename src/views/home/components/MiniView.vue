@@ -119,8 +119,12 @@ function handleUpdateShow(val: boolean) {
 const moving = computed(() => pegboardStore.movingItems && pegboardStore.movingItems.length > 0)
 function handlePanelClick(pegboard: Pegboard, index: number) {
   if (moving.value) {
-    pegboardStore.moveItemToPegboard(pegboard.id)
-    pegboardStore.miniViewVisible = false
+    try {
+      pegboardStore.moveItemToPegboard(pegboard.id)
+      pegboardStore.miniViewVisible = false
+    } catch (err: any) {
+      message.error(err.message)
+    }
   }
   pegboardStore.goToIndex(index)
 }

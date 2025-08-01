@@ -5,12 +5,15 @@
       class="max-w-1/2"
       preset="card"
       title="组件设置"
+      draggable
     >
       <div v-if="item && item.props">
         <NForm>
-          <NFormItem v-for="(val, key) in item.props" :key="key" :label="val.label">
-            <DynamicPropEditor :prop="val" />
-          </NFormItem>
+          <template v-for="(val, key) in item.props" :key="key">
+            <NFormItem v-if="!val.hide" :label="val.label">
+              <DynamicPropEditor :prop="val" />
+            </NFormItem>
+          </template>
         </NForm>
       </div>
     </NModal>

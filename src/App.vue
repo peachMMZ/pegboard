@@ -1,7 +1,7 @@
 <template>
   <NConfigProvider :theme-overrides="themeStore.themeOverride" :theme="naiveTheme" :locale="zhCN">
     <NGlobalStyle />
-    <NMessageProvider>
+    <NMessageProvider placement="bottom">
       <div class="h-screen">
         <RouterView />
       </div>

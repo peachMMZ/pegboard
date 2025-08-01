@@ -37,7 +37,6 @@ export const tabs: MarketplaceTab[] = [
         w: 4,
         h: 2,
         props: {
-          src: { label: '图片地址', type: 'string', editable: true, value: '/image/Luffy.png' },
           path: { label: '图片路径', type: 'file', editable: true, value: undefined }
         }
       }

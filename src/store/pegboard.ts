@@ -22,6 +22,7 @@ export type PegboardItemPropType = 'string' | 'number' | 'boolean' | 'file' | 'u
 export interface PegboardItemProp<K extends PegboardItemPropType = PegboardItemPropType> {
   [key: string]: {
     label: string
+    hide?: boolean
     editable?: boolean
     type: K
     value: any
@@ -126,7 +127,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
           currentPegboard.value.items = currentPegboard.value.items.filter((i) => i.id !== item.id)
         }
       } catch (error) {
-        console.error('移动项目失败', error)
+        throw error
       }
     })
     movingItems.value = []
@@ -138,7 +139,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
     const usedArea = existingItems.reduce((acc, item) => acc + item.w * item.h, 0)
     const availableArea = totalArea - usedArea
     if (availableArea < w * h) {
-      throw new Error('无可用位置')
+      throw new Error('没有空位了(┬┬﹏┬┬)')
     }
     let x = 0
     let y = 0

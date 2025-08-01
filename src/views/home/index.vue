@@ -19,7 +19,7 @@
     </Transition>
     <div v-if="pegboardStore.pegboardList.length > 0" class="h-6 w-full flex justify-center">
       <NPagination
-        :current="currentIndex + 1"
+        :page="currentIndex + 1"
         :page-count="pegboardStore.pegboardList.length"
         @update:page="(page) => pegboardStore.goToIndex(page - 1)"
       >

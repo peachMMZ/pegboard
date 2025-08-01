@@ -1,8 +1,10 @@
 <template>
-  <div class="tile" :style="tileStyle" @dblclick="pegboardStore.openApp(item)">
+  <div class="tile" :style="tileStyle" @dblclick="openApp">
     <div class="tile-bg"></div>
     <div :class="['tile-icon', { 'tile-icon-mini': isMini }]">
-      <img :src="item.iconUrl || DefaultIcon" alt="" />
+      <NSpin :show="openning">
+        <img :src="item.iconUrl || DefaultIcon" :alt="item.name" />
+      </NSpin>
     </div>
     <div v-if="!isMini" class="tile-title">
       {{ item.name }}
@@ -11,8 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, CSSProperties } from 'vue'
+import { ref, computed, CSSProperties } from 'vue'
 import {
+  NSpin,
   useThemeVars
 } from 'naive-ui'
 import { usePegboardStore, PegboardItem } from '@/store/pegboard'
@@ -46,6 +49,14 @@ const isMini = computed(() => {
   // 只要 w 或 h 不为 1 就显示 title
   return props.item.w === 1 && props.item.h === 1
 })
+
+const openning = ref(false)
+function openApp() {
+  openning.value = true
+  pegboardStore.openApp(props.item).finally(() => {
+    openning.value = false
+  })
+}
 
 </script>
 

@@ -106,7 +106,6 @@ function openApp() {
   left: 14px;
   bottom: 12px;
   z-index: 2;
-  font-size: medium;
   text-shadow: 0 1px 2px rgba(0,0,0,0.10);
   max-width: 70%;
   white-space: nowrap;

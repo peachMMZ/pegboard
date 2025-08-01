@@ -53,7 +53,7 @@
                   <NInput v-model:value="pegboardStore.currentPegboard.name" />
                 </NFormItem>
                 <NFormItem label="排序">
-                  <NInputNumber v-model:value="pegboardStore.currentPegboard.sort" @change="pegboardStore.sortPegboard()" />
+                  <NInputNumber v-model:value="pegboardStore.currentPegboard.sort" @update:value="pegboardStore.sortPegboard()" />
                 </NFormItem>
               </NForm>
             </div>

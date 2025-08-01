@@ -1,6 +1,5 @@
 import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { GridLayoutItem } from '@/components/GridLayout'
 import { convertFileSrc } from '@tauri-apps/api/core'
 import { join, appDataDir, sep } from '@tauri-apps/api/path'
 import { icon } from 'tauri-plugin-fs-pro-api'
@@ -8,37 +7,9 @@ import { FastAverageColor } from 'fast-average-color'
 import { LazyStore } from '@tauri-apps/plugin-store'
 import { openPath } from '@tauri-apps/plugin-opener'
 import { remove } from '@tauri-apps/plugin-fs'
+import { Pegboard, PegboardItem } from './types/pegboard.d'
 
-export interface Pegboard {
-  id: number
-  name: string
-  sort?: number
-  items: PegboardItem[]
-}
-
-export type PegboardItemType = 'launcher' | 'folder' | 'file' | 'clock' | 'image'
-
-export type PegboardItemPropType = 'string' | 'number' | 'boolean' | 'file' | 'undefined'
-export interface PegboardItemProp<K extends PegboardItemPropType = PegboardItemPropType> {
-  [key: string]: {
-    label: string
-    hide?: boolean
-    editable?: boolean
-    type: K
-    value: any
-  }
-}
-
-export interface PegboardItem extends GridLayoutItem {
-  name?: string
-  type: PegboardItemType
-  component?: string
-  props?: PegboardItemProp<PegboardItemPropType>
-  iconPath?: string
-  iconUrl?: string
-  color?: string
-  path?: string
-}
+export * from './types/pegboard.d'
 
 export const usePegboardStore = defineStore('pegboard', () => {
   const store = new LazyStore('pegboard.json')

@@ -2,20 +2,16 @@
   <div class="flex justify-between items-center">
     <div class="basis-1/4">
       <NButton type="primary" quaternary :render-icon="renderIcon(ChevronLeft)" @click="$router.back()"></NButton>
+      <NButton type="primary" quaternary :render-icon="renderIcon(Search)"></NButton>
     </div>
     <div class="basis-1/2 flex justify-center">
-      <NInput size="small">
-        <template #suffix>
-          <NIcon :component="Search"></NIcon>
-        </template>
-      </NInput>
     </div>
     <div class="basis-1/4 flex justify-end items-center">
       <NButton type="primary" quaternary :render-icon="renderIcon(PlusCircle)" @click="addItem"></NButton>
       <NButton
-        type="primary"
+        type="warning"
         quaternary
-        :render-icon="renderIcon(ChevronDownCircle, { color: themeVars.warningColor })"
+        :render-icon="renderIcon(ChevronDownCircle)"
         @click="hide"
       ></NButton>
     </div>
@@ -24,10 +20,7 @@
 
 <script setup lang="ts">
 import {
-  NInput,
   NButton,
-  NIcon,
-  useThemeVars,
   useMessage
 } from 'naive-ui'
 import { Search, ChevronDownCircle, PlusCircle, ChevronLeft } from 'lucide-vue-next'
@@ -36,7 +29,6 @@ import { getAllWindows } from '@tauri-apps/api/window'
 import { usePegboardStore } from '@/store/pegboard'
 import { open } from '@tauri-apps/plugin-dialog'
 
-const themeVars = useThemeVars()
 const message = useMessage()
 const pegboardStore = usePegboardStore()
 

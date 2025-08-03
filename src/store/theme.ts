@@ -23,24 +23,31 @@ export const useThemeStore = defineStore('theme', () => {
   const theme = ref<Theme>('light')
   const osTheme = useOsTheme()
   const followOsTheme = ref(true)
+  const colorfulBackground = ref(false)
   const themeOverride = ref<GlobalThemeOverrides>(defaultThemeOverride())
 
   const init = async () => {
     theme.value = (await store.get<Theme>('theme')) || 'light'
     followOsTheme.value = (await store.get<boolean>('followOsTheme')) ?? true
+    colorfulBackground.value = (await store.get<boolean>('colorfulBackground')) ?? false
     themeOverride.value = (await store.get<GlobalThemeOverrides>('themeOverride')) || defaultThemeOverride()
     watch(() => ({
       theme: theme.value,
       osTheme: osTheme.value,
       followOsTheme: followOsTheme.value,
+      colorfulBackground: colorfulBackground.value,
       themeOverride: themeOverride.value
     }), async (val) => {
       if (val.followOsTheme && val.osTheme) {
         theme.value = val.osTheme
       }
+      if (val.theme === 'dark') {
+        colorfulBackground.value = false
+      }
       setTheme(val.followOsTheme ? null : val.theme)
       await store.set('theme', val.theme)
       await store.set('followOsTheme', val.followOsTheme)
+      await store.set('colorfulBackground', val.colorfulBackground)
       await store.set('themeOverride', val.themeOverride)
     }, { deep: true })
   }
@@ -52,6 +59,8 @@ export const useThemeStore = defineStore('theme', () => {
     const { base, hover, pressed, suppl } = deriveColorStates(color)
     if (!themeOverride.value.common) {
       themeOverride.value.common = {}
+    }
+    if (colorfulBackground.value) {
     }
     themeOverride.value.common.primaryColor = base
     themeOverride.value.common.primaryColorHover = hover
@@ -70,6 +79,7 @@ export const useThemeStore = defineStore('theme', () => {
     theme,
     osTheme,
     followOsTheme,
+    colorfulBackground,
     themeOverride,
     init,
     setPrimaryColor,

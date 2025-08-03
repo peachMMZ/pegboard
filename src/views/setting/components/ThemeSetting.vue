@@ -24,7 +24,8 @@
             class="w-32 h-36 flex flex-col justify-center items-center gap-y-2 text-xl font-bold"
             :style="{
               borderRadius: themeVars.borderRadius,
-              border: `2px solid ${themeVars.borderColor}`
+              border: `2px solid ${themeVars.borderColor}`,
+              backgroundColor: themeVars.baseColor
             }"
           >
             <NIcon :component="Computer" :size="48"></NIcon>
@@ -45,7 +46,7 @@
                 <div
                   class="w-10 h-10 cursor-pointer hover:scale-102"
                   :style="{
-                    border: item.color == themeVars.primaryColor ? `3px solid ${themeVars.textColor1}` : undefined,
+                    border: item.color == themeVars.primaryColor ? `2px solid ${themeVars.textColor1}` : undefined,
                     borderRadius: themeVars.borderRadius,
                     backgroundColor: item.color
                   }"
@@ -69,6 +70,11 @@
             </div>
           </NPopover>
         </div>
+      </NFormItem>
+      <NFormItem label="背景">
+        <SettingOption label="彩色背景" tooltip="dark模式下不可用">
+          <NSwitch v-model:value="themeStore.colorfulBackground" :disabled="themeStore.theme === 'dark'" size="small" />
+        </SettingOption>
       </NFormItem>
       <NFormItem label="字体大小">
         <div class="w-full flex items-center gap-x-4">
@@ -110,6 +116,7 @@ import {
   useThemeVars,
 } from 'naive-ui'
 import { Computer } from 'lucide-vue-next'
+import { SettingOption } from '@/components/SettingOption'
 import { useThemeStore, Theme } from '@/store/theme'
 
 const themeVars = useThemeVars()

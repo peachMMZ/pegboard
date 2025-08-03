@@ -129,6 +129,9 @@ export const usePegboardStore = defineStore('pegboard', () => {
         if (x + w > cols) {
           x = 0
           y += h
+          if (y + h > rows) {
+            throw new Error('没有空位了(┬┬﹏┬┬)')
+          }
         }
       }
     }

@@ -1,6 +1,6 @@
 <template>
   <div class="h-full">
-    <NLayout class="h-full">
+    <NLayout class="h-full" content-class="overflow-hidden">
       <NLayoutHeader class="h-12 p-2" :style="{ backgroundColor: backgroundColor.header }">
         <Header></Header>
       </NLayoutHeader>

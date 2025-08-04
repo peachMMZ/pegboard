@@ -2,9 +2,11 @@
   <NConfigProvider :theme-overrides="themeStore.themeOverride" :theme="naiveTheme" :locale="zhCN">
     <NGlobalStyle />
     <NMessageProvider placement="bottom">
-      <div class="h-screen">
-        <RouterView />
-      </div>
+      <NDialogProvider>
+        <div class="h-screen">
+          <RouterView />
+        </div>
+      </NDialogProvider>
     </NMessageProvider>
   </NConfigProvider>
 </template>
@@ -15,6 +17,7 @@ import {
   NConfigProvider,
   NGlobalStyle,
   NMessageProvider,
+  NDialogProvider,
   lightTheme,
   darkTheme,
   zhCN

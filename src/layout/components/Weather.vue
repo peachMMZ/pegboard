@@ -28,9 +28,9 @@ const loading = ref(false)
 const dataVisible = ref(false)
 const imgSrc = computed(() => {
   if (weatherData.value.now?.code) {
-    return `/src/assets/image/weather/${osTheme.value === 'dark' ? 'white' : 'black'}/${weatherData.value.now?.code}@1x.png`
+    return `/image/weather/${osTheme.value === 'dark' ? 'white' : 'black'}/${weatherData.value.now?.code}@1x.png`
   } else {
-    return '/src/assets/image/weather/white/99@1x.png'
+    return '/image/weather/white/99@1x.png'
   }
 })
 const temperatureColor = computed(() => {

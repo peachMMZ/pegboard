@@ -144,5 +144,5 @@ pegboard/
 ## 联系作者
 - Email: horselm@outlook.com
 
-## 鸣谢
-本README文件是在AI的协助下生成的。
+## 注意事项
+本README文件是在AI的协助下生成的。使用前请仔细审查和验证信息。

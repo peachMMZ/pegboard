@@ -144,5 +144,5 @@ This project is licensed under the [MIT License](LICENSE).
 ## Contact the Author
 - Email: horselm@outlook.com
 
-## Acknowledgements
-This README file was generated with the assistance of AI.
+## Notice
+This README file was generated with the assistance of AI. Please review and verify the information before use.

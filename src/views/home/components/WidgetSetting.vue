@@ -8,7 +8,7 @@
       draggable
     >
       <div v-if="item && item.props">
-        <NForm>
+        <NForm label-placement="left" label-width="80px">
           <template v-for="(val, key) in item.props" :key="key">
             <NFormItem v-if="!val.hide" :label="val.label">
               <DynamicPropEditor :prop="val" />

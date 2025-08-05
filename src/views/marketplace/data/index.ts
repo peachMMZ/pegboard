@@ -37,10 +37,12 @@ export const tabs: MarketplaceTab[] = [
         w: 4,
         h: 2,
         props: {
-          path: { label: '图片路径', type: 'file', editable: true, value: undefined }
-        }
-      }
-    ]
+          path: { label: '图片路径', type: 'file', editable: true, value: undefined },
+          rotate: { label: '旋转角度', type: 'number', editable: true, value: 0 },
+          dynamicScale: { label: '动态缩放', type: 'boolean', editable: true, value: true },
+        },
+      },
+    ],
   },
   { label: '官方', key: 'official', items: [] },
   { label: '社区', key: 'community', items: [] }

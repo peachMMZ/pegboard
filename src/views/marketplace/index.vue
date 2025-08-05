@@ -1,6 +1,6 @@
 <template>
   <div class="h-full p-2 flex flex-col">
-    <NTabs class="h-full flex-1" placement="left">
+    <NTabs class="h-full flex-1" placement="left" type="line">
       <NTabPane class="h-full" v-for="tab in tabs" :tab="tab.label" :name="tab.key">
         <div v-if="tab.items" class="h-full">
           <GridLayout v-model:value="tab.items" :draggable="false" :resizable="false">

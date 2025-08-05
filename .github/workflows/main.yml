@@ -34,7 +34,6 @@ jobs:
       - name: create .env.local file
         run: |
           echo VITE_WEATHER_API_KEY=${{ secrets.VITE_WEATHER_API_KEY }} > .env.local
-          echo VITE_WEATHER_API_URL=${{ secrets.VITE_WEATHER_API_URL }} >> .env.local
         shell: pwsh
 
       - name: install frontend dependencies

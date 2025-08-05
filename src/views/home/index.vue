@@ -1,5 +1,5 @@
 <template>
-  <div id="pegboard-container" class="h-full w-full flex flex-col p-2 overflow-hidden">
+  <div ref="pegboardContainer" class="h-full w-full flex flex-col p-2 overflow-hidden">
     <Transition :name="`slide-${currentDirection}`" mode="out-in" :duration="150">
       <div v-if="currentPegboard" :key="currentPegboard.id" class="flex-1 w-full overflow-hidden">
         <GridLayout
@@ -32,7 +32,7 @@
         <template #next></template>
       </NPagination>
     </div>
-    <MiniView to="#pegboard-container" />
+    <MiniView v-if="pegboardContainer" :to="pegboardContainer" />
     <DropdownMenu
       v-model:show="dropdownShow"
       :options="dropdownOptions"
@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, useTemplateRef } from 'vue'
 import {
   NPagination,
   useMessage,
@@ -68,6 +68,8 @@ const themeVars = useThemeVars()
 
 const pegboardStore = usePegboardStore()
 const { currentIndex, currentPegboard, currentDirection } = storeToRefs(pegboardStore)
+
+const pegboardContainer = useTemplateRef<HTMLDivElement>('pegboardContainer')
 
 const dragStates = ref<{ [key: number]: boolean }>({})
 function handleDragStart(_item: unknown, index: number) {

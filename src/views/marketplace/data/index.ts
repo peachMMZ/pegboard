@@ -48,7 +48,7 @@ export const widgetMetadataList: MarketplaceItem[] = [
   },
 ]
 
-export function getTabItems(tab: string) {
+export function getTabItems(tab: TabKey) {
   return widgetMetadataList.filter((item) => item.tab === tab)
 }
 

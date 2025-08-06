@@ -1,9 +1,9 @@
 <template>
   <div class="h-full p-2 flex flex-col">
-    <NTabs class="h-full flex-1" placement="left" type="line">
+    <NTabs v-model:value="activeTab" class="h-full flex-1" placement="left" type="line">
       <NTabPane class="h-full" v-for="tab in tabs" :tab="tab.label" :name="tab.key">
-        <div v-if="tab.items" class="h-full">
-          <GridLayout v-model:value="tab.items" :draggable="false" :resizable="false">
+        <div class="h-full">
+          <GridLayout v-model:value="widgetList" :draggable="false" :resizable="false">
             <template #item="{ item }">
               <Widget :type="item.type" v-bind="{ item }"></Widget>
               <div class="flex justify-between items-center mt-2">
@@ -27,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import {
   NTabs,
   NTabPane,
@@ -40,9 +41,12 @@ import { tabs } from './data'
 import { cloneDeep } from 'es-toolkit/object'
 import { useRouter } from 'vue-router'
 import { usePegboardStore, PegboardItem } from '@/store/pegboard'
+import { getTabItems } from './data'
 
 const router = useRouter()
 const pegboardStore = usePegboardStore()
+
+const activeTab = ref(tabs[0].key)
 
 function addItem(item: PegboardItem) {
   const newItem = cloneDeep(item)
@@ -52,5 +56,7 @@ function addItem(item: PegboardItem) {
     pegboardStore.miniViewVisible = true
   })
 }
+
+const widgetList = computed(() => getTabItems(activeTab.value))
 </script>
 <style scoped></style>

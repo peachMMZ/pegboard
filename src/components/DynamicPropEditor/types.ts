@@ -4,6 +4,8 @@ export interface DynamicPropEditorProps<K extends PegboardItemPropType = Pegboar
   prop: {
     label: string
     editable?: boolean
+    min?: number
+    max?: number
     type: K
     value: any
   }

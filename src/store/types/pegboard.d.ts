@@ -17,6 +17,8 @@ export interface PegboardItemProp<K extends PegboardItemPropType = PegboardItemP
     label: string
     hide?: boolean
     editable?: boolean
+    min?: number
+    max?: number
     type: K
     value: any
   }

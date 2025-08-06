@@ -45,7 +45,7 @@ const imgStyle = computed<CSSProperties>(() => {
     scale: scale,
     objectFit: 'cover',
     width: '100%',
-    height: 'auto',
+    height: '100%',
     transition: 'all 0.3s ease-in-out'
   }
 })

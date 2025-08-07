@@ -3,23 +3,31 @@
     v-if="prop.type === 'string'"
     v-model:value="prop.value"
     :disabled="!prop.editable"
-  ></NInput>
+  />
+  <NInput
+    v-if="prop.type === 'text'"
+    v-model:value="prop.value"
+    :disabled="!prop.editable"
+    type="textarea"
+    :autosize="{ minRows: 2, maxRows: 4 }"
+  />
   <NSlider
     v-if="prop.type === 'number'"
     v-model:value="prop.value"
     :disabled="!prop.editable"
     :min="prop.min"
     :max="prop.max"
-  ></NSlider>
+    :step="prop.step"
+  />
   <NSwitch
     v-if="prop.type === 'boolean'"
     v-model:value="prop.value"
     :disabled="!prop.editable"
-  ></NSwitch>
+  />
   <FileSelector
     v-if="prop.type === 'file'"
     v-model:value="prop.value"
-  ></FileSelector>
+  />
 </template>
 
 <script setup lang="ts">

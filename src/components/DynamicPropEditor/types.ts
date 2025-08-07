@@ -6,6 +6,7 @@ export interface DynamicPropEditorProps<K extends PegboardItemPropType = Pegboar
     editable?: boolean
     min?: number
     max?: number
+    step?: number
     type: K
     value: any
   }

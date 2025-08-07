@@ -1,4 +1,6 @@
 import { PegboardItem } from '@/store/pegboard'
+import { findSlot } from '@/utils/layout'
+import { plugins } from '@/widgets'
 
 export type TabKey = 'builtin' | 'official' | 'community'
 
@@ -12,44 +14,38 @@ export interface MarketplaceTab {
   key: TabKey
 }
 
-export const widgetMetadataList: MarketplaceItem[] = [
-  {
-    tab: 'builtin',
-    id: 'builtin-clock',
-    label: '基础时钟',
-    type: 'clock',
-    component: '/clock/Clock.vue',
-    x: 0,
-    y: 0,
-    w: 4,
-    h: 2,
-  },
-  {
-    tab: 'builtin',
-    id: 'builtin-image',
-    label: '图片',
-    type: 'image',
-    x: 4,
-    y: 0,
-    w: 4,
-    h: 2,
-    props: {
-      path: { label: '图片路径', type: 'file', editable: true, value: undefined },
-      rotate: {
-        label: '旋转角度',
-        type: 'number',
-        editable: true,
-        value: 0,
-        min: 0,
-        max: 360,
-      },
-      dynamicScale: { label: '动态缩放', type: 'boolean', editable: true, value: true },
-    },
-  },
-]
+export const itemList: MarketplaceItem[] = []
+
+function getBuiltinItems() {
+  const items: MarketplaceItem[] = []
+  for (const path in plugins) {
+    const module = plugins[path]
+    const plugin = module.default
+    if (plugin.hide) {
+      continue
+    }
+    const { w, h } = plugin.meta.defaultSize
+    const { x, y } = findSlot(items, w, h)
+    items.push({
+      tab: 'builtin',
+      id: `builtin${plugin.type}`,
+      label: plugin.meta.title,
+      type: plugin.type,
+      x,
+      y,
+      w,
+      h,
+      props: plugin.meta.props,
+    })
+  }
+  return items
+}
 
 export function getTabItems(tab: TabKey) {
-  return widgetMetadataList.filter((item) => item.tab === tab)
+  if (tab === 'builtin') {
+    return getBuiltinItems()
+  }
+  return itemList.filter((item) => item.tab === tab)
 }
 
 export const tabs: MarketplaceTab[] = [

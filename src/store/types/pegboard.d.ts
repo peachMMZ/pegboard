@@ -8,9 +8,13 @@ export interface Pegboard {
   items: PegboardItem[]
 }
 
-export type PegboardItemType = 'launcher' | 'folder' | 'file' | 'clock' | 'image'
+export type PegboardBaseItemType = 'launcher' | 'folder' | 'file' | 'clock' | 'image'
+export interface PegboardItemTypeMap {
+  base: PegboardBaseItemType
+}
+export type PegboardItemType = PegboardItemTypeMap[keyof PegboardItemTypeMap]
 
-export type PegboardItemPropType = 'string' | 'number' | 'boolean' | 'file' | 'undefined'
+export type PegboardItemPropType = 'string' | 'text' | 'number' | 'boolean' | 'file' | 'undefined'
 
 export interface PegboardItemProp<K extends PegboardItemPropType = PegboardItemPropType> {
   [key: string]: {
@@ -19,6 +23,7 @@ export interface PegboardItemProp<K extends PegboardItemPropType = PegboardItemP
     editable?: boolean
     min?: number
     max?: number
+    step?: number
     type: K
     value: any
   }
@@ -32,7 +37,7 @@ export interface PegboardItem extends GridLayoutItem {
   name?: string
   type: PegboardItemType
   component?: string
-  props?: PegboardItemProp<PegboardItemPropType>
+  props?: PegboardItemProp
   iconPath?: string
   iconUrl?: string
   color?: string

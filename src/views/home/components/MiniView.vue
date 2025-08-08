@@ -7,13 +7,17 @@
       :height="200"
       @update-show="handleUpdateShow"
     >
-      <NDrawerContent class="p-0">
+      <NDrawerContent
+        class="p-0"
+        :header-style="{ backgroundColor: themeStore.colorfulBackground ? themeVars.primaryColorHover : undefined }"
+        :body-content-style="{ backgroundColor: themeStore.colorfulBackground ? themeVars.primaryColorSuppl : undefined }"
+      >
         <template #header>
           <div class="flex justify-between items-center px-2">
-            <span></span>
+            <span>{{ pegboardStore.currentPegboard.name }}</span>
             <div class="flex justify-end items-center gap-x-2">
-              <NButton type="primary" size="small" secondary :disabled="moving" :render-icon="renderIcon(Pencil)" @click="editVisible = !editVisible"></NButton>
-              <NButton type="error" size="small" secondary :disabled="moving" :render-icon="renderIcon(Trash)" @click="removePegboard"></NButton>
+              <NButton type="primary" size="small" :disabled="moving" :render-icon="renderIcon(Pencil)" @click="editVisible = !editVisible"></NButton>
+              <NButton type="error" size="small" :disabled="moving" :render-icon="renderIcon(Trash)" @click="removePegboard"></NButton>
             </div>
           </div>
         </template>
@@ -82,6 +86,7 @@ import {
 } from 'naive-ui'
 import { Plus, Pencil, Trash } from 'lucide-vue-next'
 import { Pegboard, usePegboardStore } from '@/store/pegboard'
+import { useThemeStore } from '@/store/theme'
 import { renderIcon } from '@/utils/renderer'
 
 defineProps<{
@@ -90,14 +95,15 @@ defineProps<{
 
 const pegboardStore = usePegboardStore()
 const themeVars = useThemeVars()
+const themeStore = useThemeStore()
 const message = useMessage()
 
 function getPanelStyle(index: number): CSSProperties {
-  const borderColor = index === pegboardStore.currentIndex ? themeVars.value.primaryColor : themeVars.value.borderColor
+  const borderColor = index === pegboardStore.currentIndex ? themeVars.value.textColor1 : undefined
   return {
-    border: `2px solid ${borderColor}`,
+    border: borderColor ? `2px solid ${borderColor}` : undefined,
     borderRadius: themeVars.value.borderRadius,
-    backgroundColor: themeVars.value.baseColor,
+    backgroundColor: themeVars.value.primaryColor,
     cursor: 'pointer'
   }
 }

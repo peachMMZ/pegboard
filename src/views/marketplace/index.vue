@@ -1,34 +1,33 @@
 <template>
-  <div class="h-full p-2 flex flex-col">
+  <NElement class="h-full p-2 flex flex-col">
     <NTabs v-model:value="activeTab" class="h-full flex-1" placement="left" type="line">
       <NTabPane class="h-full" v-for="tab in tabs" :tab="tab.label" :name="tab.key">
         <div class="h-full">
           <GridLayout v-model:value="widgetList" :draggable="false" :resizable="false">
             <template #item="{ item }">
               <Widget :item="item" />
-              <div class="flex justify-between items-center mt-2">
-                <span>{{ item.label }}</span>
-                <div>
-                  <NButton
-                    type="primary"
-                    quaternary
-                    size="small"
-                    :render-icon="renderIcon(Plus)"
-                    @click="addItem(item)"
-                  >添加</NButton>
-                </div>
+              <div class="absolute right-2 bottom-2">
+                <NButton
+                  type="primary"
+                  size="small"
+                  :render-icon="renderIcon(Plus)"
+                  @click="addItem(item)"
+                  circle
+                  class="shadow-lg hover:shadow-xl transition-all duration-300"
+                />
               </div>
             </template>
           </GridLayout>
         </div>
       </NTabPane>
     </NTabs>
-  </div>
+  </NElement>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import {
+  NElement,
   NTabs,
   NTabPane,
   NButton,

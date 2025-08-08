@@ -30,7 +30,7 @@ export function useDropdownMenu(item?: MaybeRefOrGetter<PegboardItem | undefined
       {
         label: '设置',
         key: 'setting',
-        show: itemValue?.props !== undefined,
+        show: itemValue?.props !== undefined && Object.keys(itemValue.props).length > 0,
         icon: renderIcon(Settings2),
         action: () => {
           const activeEl = document.activeElement as HTMLElement | null

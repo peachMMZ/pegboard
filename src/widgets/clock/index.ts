@@ -1,9 +1,10 @@
-import Clock from './Clock.vue'
+import { defineAsyncComponent } from 'vue'
 import type { WidgetPlugin } from '@/widgets/index.d'
 
 const plugin: WidgetPlugin = {
+  key: 'clock',
   type: 'clock',
-  component: Clock,
+  component: defineAsyncComponent(() => import('./src/index.vue')),
   meta: {
     title: '基础时钟',
     defaultSize: { w: 4, h: 2 }

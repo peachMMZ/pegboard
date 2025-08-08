@@ -29,6 +29,7 @@ function getBuiltinItems() {
     items.push({
       tab: 'builtin',
       id: `builtin${plugin.type}`,
+      widgetKey: plugin.key,
       label: plugin.meta.title,
       type: plugin.type,
       x,

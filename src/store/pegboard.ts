@@ -9,6 +9,8 @@ import { LazyStore } from '@tauri-apps/plugin-store'
 import { openPath } from '@tauri-apps/plugin-opener'
 import { remove } from '@tauri-apps/plugin-fs'
 import { Pegboard, PegboardItem } from './types/pegboard.d'
+import { timestamp } from '@/utils/identity'
+import { widgetMetaMap } from '@/widgets'
 
 export * from './types/pegboard.d'
 
@@ -30,7 +32,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
     }
     if (pegboardList.value.length === 0) {
       pegboardList.value.push({
-        id: Date.now(),
+        id: timestamp(),
         name: '默认',
         items: []
       })
@@ -38,6 +40,31 @@ export const usePegboardStore = defineStore('pegboard', () => {
     watch(pegboardList, async (val) => {
       await store.set('pegboardList', val)
     }, { deep: true })
+
+    pegboardList.value.forEach((pegboard) => {
+      pegboard.items.forEach((item) => {
+        upgradeItem(item)
+      })
+    })
+  }
+
+  const upgradeItem = (item: PegboardItem) => {
+    const meta = widgetMetaMap[item.widgetKey]
+    if (!item.props) {
+      item.props = {}
+    }
+    if (meta && meta.props) {
+      for (const [key, prop] of Object.entries(meta.props)) {
+        if (!item.props[key]) {
+          item.props[key] = prop
+        }
+      }
+      for (const key of Object.keys(item.props)) {
+        if (!meta.props[key]) {
+          delete item.props[key]
+        }
+      }
+    }
   }
 
   const sortPegboard = (direction: 'asc' | 'desc' = 'asc') => {
@@ -143,6 +170,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
     const color = (await fastAverageColor.getColorAsync(iconSrc)).hex
     const item: PegboardItem = {
       id: Date.now(),
+      widgetKey: 'launcher',
       name,
       type: 'launcher',
       x: posX,

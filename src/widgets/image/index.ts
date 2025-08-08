@@ -1,9 +1,10 @@
-import Image from './Image.vue'
+import { defineAsyncComponent } from 'vue'
 import type { WidgetPlugin } from '@/widgets/index.d'
 
 const plugin: WidgetPlugin = {
+  key: 'image',
   type: 'image',
-  component: Image,
+  component: defineAsyncComponent(() => import('./src/index.vue')),
   meta: {
     title: '图片',
     defaultSize: { w: 4, h: 2 },

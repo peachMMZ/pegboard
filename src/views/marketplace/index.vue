@@ -5,7 +5,7 @@
         <div class="h-full">
           <GridLayout v-model:value="widgetList" :draggable="false" :resizable="false">
             <template #item="{ item }">
-              <Widget :type="item.type" v-bind="{ item }"></Widget>
+              <Widget :item="item" />
               <div class="flex justify-between items-center mt-2">
                 <span>{{ item.label }}</span>
                 <div>

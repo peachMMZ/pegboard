@@ -15,18 +15,18 @@ export interface PegboardItemTypeMap {
 export type PegboardItemType = PegboardItemTypeMap[keyof PegboardItemTypeMap]
 
 export type PegboardItemPropType = 'string' | 'text' | 'number' | 'boolean' | 'file' | 'undefined'
-
 export interface PegboardItemProp<K extends PegboardItemPropType = PegboardItemPropType> {
-  [key: string]: {
-    label: string
-    hide?: boolean
-    editable?: boolean
-    min?: number
-    max?: number
-    step?: number
-    type: K
-    value: any
-  }
+  label: string
+  hide?: boolean
+  editable?: boolean
+  min?: number
+  max?: number
+  step?: number
+  type: K
+  value: any
+}
+export interface PegboardItemProps<K extends PegboardItemPropType = PegboardItemPropType> {
+  [key: string]: PegboardItemProp
 }
 
 export interface PegboardItemStyle extends CSSProperties {
@@ -35,9 +35,10 @@ export interface PegboardItemStyle extends CSSProperties {
 
 export interface PegboardItem extends GridLayoutItem {
   name?: string
+  widgetKey: string
   type: PegboardItemType
   component?: string
-  props?: PegboardItemProp
+  props?: PegboardItemProps
   iconPath?: string
   iconUrl?: string
   color?: string

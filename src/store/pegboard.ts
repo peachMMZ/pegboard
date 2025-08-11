@@ -183,7 +183,8 @@ export const usePegboardStore = defineStore('pegboard', () => {
       path,
       color,
       iconPath,
-      iconUrl: iconSrc
+      iconUrl: iconSrc,
+      resizable: true
     }
     return item
   }

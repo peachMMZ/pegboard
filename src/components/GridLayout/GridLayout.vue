@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends GridLayoutItem">
-import { ref, computed, onMounted, watchEffect } from 'vue'
+import { ref, computed, onMounted, watchEffect, nextTick } from 'vue'
 import interact from 'interactjs'
 import { Interactable } from '@interactjs/core/Interactable'
 import { GridLayoutProps, GridLayoutItem } from './types'
@@ -259,8 +259,10 @@ function setInteractable() {
 }
 
 onMounted(() => {
-  setInteractable()
   watchEffect(() => {
+    if (items.value.length > 0) {
+      nextTick(setInteractable)
+    }
     // 容器尺寸改变时，重新计算布局
     if (!containerRef.value) return
     const gridItems = containerRef.value.querySelectorAll('.grid-item')

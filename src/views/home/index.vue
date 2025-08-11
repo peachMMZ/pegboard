@@ -1,5 +1,5 @@
 <template>
-  <NElement ref="pegboardContainer" class="h-full w-full flex flex-col p-2 overflow-hidden">
+  <div ref="pegboardContainer" class="h-full w-full flex flex-col p-2 overflow-hidden">
     <Transition :name="`slide-${currentDirection}`" mode="out-in" :duration="150">
       <div v-if="currentPegboard" :key="currentPegboard.id" class="flex-1 w-full overflow-hidden">
         <GridLayout
@@ -42,13 +42,12 @@
       v-model:show="settingVisible"
       :item="selectedItem"
     />
-  </NElement>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, useTemplateRef } from 'vue'
 import {
-  NElement,
   NPagination,
   useMessage,
   useThemeVars
@@ -113,6 +112,10 @@ const dropdownShow = ref(false)
 function listenArrowKeySelect() {
   listen<KeyboardEvent>('pegboard://key-down', (event) => {
     if (currentPegboard.value.items) {
+      if (event.payload.key === 'Enter' && selectedItem.value) {
+        pegboardStore.openApp(selectedItem.value)
+        return
+      }
       const { newSelectedItem } = useArrowKeySelect(event.payload, currentPegboard.value.items, selectedItem.value)
       selectedItem.value = newSelectedItem
     }
@@ -182,12 +185,11 @@ onUnmounted(() => {
 }
 
 .selected {
-  box-shadow: 0 0 0 2px var(--primary-color-hover);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateY(-2px);
-  background-color: var(--primary-color);
+  background-color: v-bind('themeVars.primaryColor');
   box-shadow:
-    0 0 0 2px var(--primary-color),
+    0 0 0 2px v-bind('themeVars.primaryColor'),
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }

@@ -53,15 +53,18 @@ export const usePegboardStore = defineStore('pegboard', () => {
     if (!item.props) {
       item.props = {}
     }
-    if (meta && meta.props) {
-      for (const [key, prop] of Object.entries(meta.props)) {
-        if (!item.props[key]) {
-          item.props[key] = prop
+    if (meta) {
+      item.resizable = meta.resizable
+      if (meta.props) {
+        for (const [key, prop] of Object.entries(meta.props)) {
+          if (!item.props[key]) {
+            item.props[key] = prop
+          }
         }
-      }
-      for (const key of Object.keys(item.props)) {
-        if (!meta.props[key]) {
-          delete item.props[key]
+        for (const key of Object.keys(item.props)) {
+          if (!meta.props[key]) {
+            delete item.props[key]
+          }
         }
       }
     }

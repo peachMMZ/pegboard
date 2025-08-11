@@ -5,6 +5,7 @@ export interface WidgetMeta {
   title: string
   icon?: Component
   defaultSize: { w: number, h: number }
+  resizable?: boolean
   props?: PegboardItemProps
 }
 

@@ -15,6 +15,7 @@ const plugin: WidgetPlugin = {
   meta: {
     title: '便签',
     defaultSize: { w: 4, h: 2 },
+    resizable: true,
     props: {
       text: { label: '文本', type: 'text', value: '这是一个便签', editable: true },
       fontSize: { label: '字体大小', type: 'number', value: 20, editable: true },

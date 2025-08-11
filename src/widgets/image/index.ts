@@ -8,6 +8,7 @@ const plugin: WidgetPlugin = {
   meta: {
     title: '图片',
     defaultSize: { w: 4, h: 2 },
+    resizable: true,
     props: {
       path: { label: '图片路径', type: 'file', editable: true, value: undefined },
       rotate: {

@@ -8,7 +8,8 @@ const plugin: WidgetPlugin = {
   component: defineAsyncComponent(() => import('./src/index.vue')),
   meta: {
     title: '启动器',
-    defaultSize: { w: 2, h: 2 }
+    defaultSize: { w: 2, h: 2 },
+    resizable: true
   }
 }
 

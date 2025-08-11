@@ -37,6 +37,7 @@ function getBuiltinItems() {
       w,
       h,
       props: plugin.meta.props,
+      resizable: plugin.meta.resizable
     })
   }
   return items

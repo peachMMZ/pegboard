@@ -7,7 +7,9 @@ const plugin: WidgetPlugin = {
   component: defineAsyncComponent(() => import('./src/index.vue')),
   meta: {
     title: '基础时钟',
-    defaultSize: { w: 4, h: 2 }
+    resizable: true,
+    defaultSize: { w: 4, h: 2 },
+    minSize: { w: 3, h: 2 },
   }
 }
 

@@ -231,8 +231,8 @@ function setInteractable() {
           interact.modifiers.restrictSize({
             min: { width: minWidthValue, height: minHeightValue },
             max: {
-              width: containerRef.value?.offsetWidth || maxWidthValue,
-              height: containerRef.value?.offsetHeight || maxHeightValue
+              width: maxWidthValue || gridSize.value.width * cols,
+              height: maxHeightValue || gridSize.value.height * rows
             }
           })
         ],

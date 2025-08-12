@@ -54,7 +54,12 @@ export const usePegboardStore = defineStore('pegboard', () => {
       item.props = {}
     }
     if (meta) {
-      item.resizable = meta.resizable
+      const { resizable, minSize, maxSize } = meta
+      item.resizable = resizable
+      item.minH = minSize?.h
+      item.minW = minSize?.w
+      item.maxH = maxSize?.h
+      item.maxW = maxSize?.w
       if (meta.props) {
         for (const [key, prop] of Object.entries(meta.props)) {
           if (!item.props[key]) {

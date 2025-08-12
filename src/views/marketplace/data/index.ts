@@ -36,6 +36,10 @@ function getBuiltinItems() {
       y,
       w,
       h,
+      minH: plugin.meta.minSize?.h,
+      minW: plugin.meta.minSize?.w,
+      maxH: plugin.meta.maxSize?.h,
+      maxW: plugin.meta.maxSize?.w,
       props: plugin.meta.props,
       resizable: plugin.meta.resizable
     })

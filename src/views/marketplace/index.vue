@@ -5,15 +5,21 @@
         <div class="h-full">
           <GridLayout v-model:value="widgetList" :draggable="false" :resizable="false">
             <template #item="{ item }">
-              <Widget :item="item" />
+              <Widget
+                :item="item"
+                @mouseenter="() => moreVisibles[item.widgetKey] = true"
+                @mouseleave="() => moreVisibles[item.widgetKey] = false"
+              />
               <div class="absolute right-2 bottom-2">
                 <NButton
+                  v-if="moreVisibles[item.widgetKey]"
+                  class="shadow-lg hover:shadow-xl transition-all duration-300"
                   type="primary"
                   size="small"
                   :render-icon="renderIcon(Plus)"
-                  @click="addItem(item)"
                   circle
-                  class="shadow-lg hover:shadow-xl transition-all duration-300"
+                  @click="addItem(item)"
+                  @mouseenter="() => moreVisibles[item.widgetKey] = true"
                 />
               </div>
             </template>
@@ -56,6 +62,13 @@ function addItem(item: PegboardItem) {
   })
 }
 
-const widgetList = computed(() => getTabItems(activeTab.value))
+const moreVisibles = ref<Record<string, boolean>>({})
+const widgetList = computed(() => {
+  const items = getTabItems(activeTab.value)
+  items.forEach(item => {
+    moreVisibles.value[item.widgetKey] = false
+  })
+  return items
+})
 </script>
 <style scoped></style>

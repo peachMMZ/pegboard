@@ -21,6 +21,7 @@ export type PegboardItemPropType =
   | 'boolean'
   | 'file'
   | 'slider'
+  | 'select'
   | 'undefined'
 export interface PegboardItemProp<K extends PegboardItemPropType = PegboardItemPropType> {
   label: string
@@ -29,6 +30,7 @@ export interface PegboardItemProp<K extends PegboardItemPropType = PegboardItemP
   min?: number
   max?: number
   step?: number
+  options?: { label: string, value: string | number }[]
   type: K
   value: any
 }

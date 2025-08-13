@@ -32,6 +32,12 @@
     v-model:value="prop.value"
     :disabled="!prop.editable"
   />
+  <NSelect
+    v-if="prop.type === 'select'"
+    v-model:value="prop.value"
+    :disabled="!prop.editable"
+    :options="prop.options"
+  />
   <FileSelector
     v-if="prop.type === 'file'"
     v-model:value="prop.value"
@@ -39,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { NInput, NInputNumber, NSlider, NSwitch } from 'naive-ui'
+import { NInput, NInputNumber, NSlider, NSwitch, NSelect } from 'naive-ui'
 import { FileSelector } from '@/components/FileSelector'
 import { DynamicPropEditorProps } from './types'
 

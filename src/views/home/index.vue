@@ -41,6 +41,9 @@
     <WidgetSetting
       v-model:show="settingVisible"
       :item="selectedItem"
+      @update:show="(show) => {
+        if (!show) selectedItem = undefined
+      }"
     />
   </div>
 </template>

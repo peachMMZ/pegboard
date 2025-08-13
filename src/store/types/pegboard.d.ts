@@ -14,7 +14,14 @@ export interface PegboardItemTypeMap {
 }
 export type PegboardItemType = PegboardItemTypeMap[keyof PegboardItemTypeMap]
 
-export type PegboardItemPropType = 'string' | 'text' | 'number' | 'boolean' | 'file' | 'undefined'
+export type PegboardItemPropType =
+  | 'string'
+  | 'text'
+  | 'number'
+  | 'boolean'
+  | 'file'
+  | 'slider'
+  | 'undefined'
 export interface PegboardItemProp<K extends PegboardItemPropType = PegboardItemPropType> {
   label: string
   hide?: boolean

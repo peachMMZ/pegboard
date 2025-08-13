@@ -11,8 +11,16 @@
     type="textarea"
     :autosize="{ minRows: 2, maxRows: 4 }"
   />
-  <NSlider
+  <NInputNumber
     v-if="prop.type === 'number'"
+    v-model:value="prop.value"
+    :disabled="!prop.editable"
+    :min="prop.min"
+    :max="prop.max"
+    :step="prop.step"
+  />
+  <NSlider
+    v-if="prop.type === 'slider'"
     v-model:value="prop.value"
     :disabled="!prop.editable"
     :min="prop.min"
@@ -31,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { NInput, NSlider, NSwitch } from 'naive-ui'
+import { NInput, NInputNumber, NSlider, NSwitch } from 'naive-ui'
 import { FileSelector } from '@/components/FileSelector'
 import { DynamicPropEditorProps } from './types'
 

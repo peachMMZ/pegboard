@@ -61,16 +61,16 @@ export const usePegboardStore = defineStore('pegboard', () => {
       item.maxH = maxSize?.h
       item.maxW = maxSize?.w
       if (meta.props) {
+        const newProps: Record<string, typeof meta.props[keyof typeof meta.props]> = {}
+
         for (const [key, prop] of Object.entries(meta.props)) {
-          if (!item.props[key]) {
-            item.props[key] = prop
+          newProps[key] = {
+            ...prop,
+            value: item.props?.[key]?.value ?? prop.value
           }
         }
-        for (const key of Object.keys(item.props)) {
-          if (!meta.props[key]) {
-            delete item.props[key]
-          }
-        }
+
+        item.props = newProps
       }
     }
   }

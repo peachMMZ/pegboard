@@ -13,7 +13,7 @@ const plugin: WidgetPlugin = {
       path: { label: '图片路径', type: 'file', editable: true, value: undefined },
       rotate: {
         label: '旋转角度',
-        type: 'number',
+        type: 'slider',
         editable: true,
         value: 0,
         min: 0,

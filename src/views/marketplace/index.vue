@@ -11,16 +11,21 @@
                 @mouseleave="() => moreVisibles[item.widgetKey] = false"
               />
               <div class="absolute right-2 bottom-2">
-                <NButton
-                  v-if="moreVisibles[item.widgetKey]"
-                  class="shadow-lg hover:shadow-xl transition-all duration-300"
-                  type="primary"
-                  size="small"
-                  :render-icon="renderIcon(Plus)"
-                  circle
-                  @click="addItem(item)"
-                  @mouseenter="() => moreVisibles[item.widgetKey] = true"
-                />
+                <NTooltip v-if="moreVisibles[item.widgetKey]">
+                  <template #trigger>
+                    <NButton
+                      v-if="moreVisibles[item.widgetKey]"
+                      class="shadow-lg hover:shadow-xl transition-all duration-300"
+                      type="primary"
+                      size="small"
+                      :render-icon="renderIcon(Plus)"
+                      circle
+                      @click="addItem(item)"
+                      @mouseenter="() => moreVisibles[item.widgetKey] = true"
+                    />
+                  </template>
+                  <span>{{ item.label }}</span>
+                </NTooltip>
               </div>
             </template>
           </GridLayout>
@@ -37,6 +42,7 @@ import {
   NTabs,
   NTabPane,
   NButton,
+  NTooltip,
 } from 'naive-ui'
 import { Plus } from 'lucide-vue-next'
 import { GridLayout } from '@/components/GridLayout'

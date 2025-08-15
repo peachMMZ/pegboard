@@ -15,7 +15,7 @@ const plugin: WidgetPlugin = {
   component: defineAsyncComponent(() => import('./src/index.vue')),
   meta: {
     title: '网页链接',
-    defaultSize: { w: 1, h: 1 },
+    defaultSize: { w: 2, h: 1 },
     resizable: true,
     props: {
 

@@ -66,7 +66,7 @@
             </template>
             <div>
               <span>自定义</span>
-              <NColorPicker :show-alpha="false" :value="themeVars.primaryColor" @update:value="themeStore.setPrimaryColor" />
+              <NColorPicker :show-alpha="false" :value="themeVars.primaryColor" @update:value="updateThemeColor" />
             </div>
           </NPopover>
         </div>
@@ -118,6 +118,7 @@ import {
 import { Computer } from 'lucide-vue-next'
 import { SettingOption } from '@/components/SettingOption'
 import { useThemeStore, Theme } from '@/store/theme'
+import { debounce } from 'es-toolkit'
 
 const themeVars = useThemeVars()
 const themeStore = useThemeStore()
@@ -167,5 +168,7 @@ function onSelectPresetColor(colorStatus: typeof presetColors[0]) {
 }
 
 const fontSizeValue = computed(() => parseInt(themeVars.value.fontSize.replace('px', '')))
+
+const updateThemeColor = debounce(themeStore.setPrimaryColor, 200)
 </script>
 <style scoped></style>

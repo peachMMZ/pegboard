@@ -17,7 +17,12 @@
             <span>{{ pegboardStore.currentPegboard.name }}</span>
             <div class="flex justify-end items-center gap-x-2">
               <NButton type="primary" size="small" :disabled="moving" :render-icon="renderIcon(Pencil)" @click="editVisible = !editVisible"></NButton>
-              <NButton type="error" size="small" :disabled="moving" :render-icon="renderIcon(Trash)" @click="removePegboard"></NButton>
+              <NPopconfirm @positive-click="removePegboard">
+                <template #trigger>
+                  <NButton type="error" size="small" :disabled="moving" :render-icon="renderIcon(Trash)"></NButton>
+                </template>
+                <span>确认删除该面板吗ಥ_ಥ</span>
+              </NPopconfirm>
             </div>
           </div>
         </template>
@@ -81,6 +86,7 @@ import {
   NInput,
   NInputNumber,
   NScrollbar,
+  NPopconfirm,
   useThemeVars,
   useMessage
 } from 'naive-ui'

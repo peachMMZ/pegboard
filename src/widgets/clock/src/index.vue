@@ -18,7 +18,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useThemeVars } from 'naive-ui'
 import { PegboardItem } from '@/store/pegboard'
 
-defineProps<{ item: PegboardItem }>()
+const props = defineProps<{ item: PegboardItem }>()
 
 const themeVars = useThemeVars()
 
@@ -32,13 +32,17 @@ const containerStyle = computed(() => ({
 const currentTime = ref(new Date())
 let timeUpdateTimer: number
 
-// 格式化时间 (HH:MM:SS)
+const format = computed(() => props.item.props?.format.value || 'HH:mm')
+const hour12 = computed(() => props.item.props?.hour12?.value ?? false)
+const showDate = computed(() => props.item.props?.showDate?.value ?? true)
+const showWeekday = computed(() => props.item.props?.showWeekday?.value ?? true)
+
+const timeFormats = computed<Record<string, Intl.DateTimeFormatOptions>>(() => ({
+  'HH:mm': { hour: '2-digit', minute: '2-digit', hour12: hour12.value },
+  'HH:mm:ss': { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: hour12.value }
+}))
 const formattedTime = computed(() => {
-  return currentTime.value.toLocaleTimeString('zh-CN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  })
+  return currentTime.value.toLocaleTimeString('zh-CN', timeFormats.value[format.value]).replace(/上午|下午/g, '').trim()
 })
 
 // 拆分时间字符为数组
@@ -48,14 +52,14 @@ const timeChars = computed(() => {
 
 // 格式化日期
 const formattedDate = computed(() => {
-  const date = currentTime.value.toLocaleDateString('zh-CN', {
+  const date = showDate.value ? currentTime.value.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
-  }).replace(/\//g, '-')
-  const weekday = currentTime.value.toLocaleDateString('zh-CN', {
+  }).replace(/\//g, '-') : ''
+  const weekday = showWeekday.value ? currentTime.value.toLocaleDateString('zh-CN', {
     weekday: 'short'
-  })
+  }) : ''
   return `${date} ${weekday}`
 })
 

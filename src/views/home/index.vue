@@ -12,7 +12,7 @@
           @drag-cancel="handleDragEnd"
         >
           <template #item="{ item, index }">
-            <Widget :item="item" :class="getItemClass(index)" @contextmenu="(e: MouseEvent) => handleTileContextMenu(e, item)" />
+            <Widget :item="item" :class="getItemClass(item, index)" @contextmenu="(e: MouseEvent) => handleTileContextMenu(e, item)" />
           </template>
         </GridLayout>
       </div>
@@ -41,6 +41,9 @@
     <WidgetSetting
       v-model:show="settingVisible"
       :item="selectedItem"
+      @update:show="(show) => {
+        if (!show) selectedItem = undefined
+      }"
     />
   </div>
 </template>
@@ -53,11 +56,13 @@ import {
   useThemeVars
 } from 'naive-ui'
 import { PegboardItem, usePegboardStore } from '@/store/pegboard'
-import { GridLayout } from '@/components/GridLayout'
+import { GridLayout, GridLayoutItem } from '@/components/GridLayout'
 import { getCurrentWindow, DragDropEvent } from '@tauri-apps/api/window'
+import { listen } from '@tauri-apps/api/event'
 import { Event } from '@tauri-apps/api/event'
 import { storeToRefs } from 'pinia'
 import { useDropdownMenu } from './composables/useDropdownMenu'
+import { useArrowKeySelect } from './composables/useArrowKeySelect'
 import MiniView from './components/MiniView.vue'
 import { Widget } from '@/widgets'
 import DropdownMenu from './components/DropdownMenu.vue'
@@ -78,10 +83,15 @@ function handleDragStart(_item: unknown, index: number) {
 function handleDragEnd() {
   dragStates.value = {}
 }
-function getItemClass(index: number) {
+function getItemClass(item: GridLayoutItem, index: number) {
+  const classList = []
   if (dragStates.value[index]) {
-    return 'active-effect'
+    classList.push('active-effect')
   }
+  if (item.id === selectedItem.value?.id) {
+    classList.push('selected')
+  }
+  return classList
 }
 
 async function onDragDrop(event: Event<DragDropEvent>) {
@@ -102,6 +112,18 @@ async function onDragDrop(event: Event<DragDropEvent>) {
 const selectedItem = ref<PegboardItem>()
 const dropdownPosition = ref({ x: 0, y: 0 })
 const dropdownShow = ref(false)
+function listenArrowKeySelect() {
+  listen<KeyboardEvent>('pegboard://key-down', (event) => {
+    if (currentPegboard.value.items) {
+      if (event.payload.key === 'Enter' && selectedItem.value) {
+        pegboardStore.openApp(selectedItem.value)
+        return
+      }
+      const { newSelectedItem } = useArrowKeySelect(event.payload, currentPegboard.value.items, selectedItem.value)
+      selectedItem.value = newSelectedItem
+    }
+  })
+}
 function handleTileContextMenu(e: MouseEvent, item: PegboardItem) {
   e.preventDefault()
   selectedItem.value = item
@@ -116,6 +138,7 @@ const { options: dropdownOptions, settingVisible } = useDropdownMenu(selectedIte
 
 let unListen: () => void
 onMounted(async () => {
+  listenArrowKeySelect()
   const window = getCurrentWindow()
   unListen = await window.onDragDropEvent(onDragDrop)
 })
@@ -162,5 +185,15 @@ onUnmounted(() => {
   transform-origin: center center;
   scale: 0.98;
   transition: all 0.2s ease-in-out;
+}
+
+.selected {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(-2px);
+  background-color: v-bind('themeVars.primaryColor');
+  box-shadow:
+    0 0 0 2px v-bind('themeVars.primaryColor'),
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 </style>

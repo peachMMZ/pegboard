@@ -1,5 +1,6 @@
 import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
+import { findSlot } from '@/utils/layout'
 import { convertFileSrc } from '@tauri-apps/api/core'
 import { join, appDataDir, sep } from '@tauri-apps/api/path'
 import { icon } from 'tauri-plugin-fs-pro-api'
@@ -8,6 +9,8 @@ import { LazyStore } from '@tauri-apps/plugin-store'
 import { openPath } from '@tauri-apps/plugin-opener'
 import { remove } from '@tauri-apps/plugin-fs'
 import { Pegboard, PegboardItem } from './types/pegboard.d'
+import { timestamp } from '@/utils/identity'
+import { widgetMetaMap } from '@/widgets'
 
 export * from './types/pegboard.d'
 
@@ -29,7 +32,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
     }
     if (pegboardList.value.length === 0) {
       pegboardList.value.push({
-        id: Date.now(),
+        id: timestamp(),
         name: '默认',
         items: []
       })
@@ -37,6 +40,39 @@ export const usePegboardStore = defineStore('pegboard', () => {
     watch(pegboardList, async (val) => {
       await store.set('pegboardList', val)
     }, { deep: true })
+
+    pegboardList.value.forEach((pegboard) => {
+      pegboard.items.forEach((item) => {
+        upgradeItem(item)
+      })
+    })
+  }
+
+  const upgradeItem = (item: PegboardItem) => {
+    const meta = widgetMetaMap[item.widgetKey]
+    if (!item.props) {
+      item.props = {}
+    }
+    if (meta) {
+      const { resizable, minSize, maxSize } = meta
+      item.resizable = resizable
+      item.minH = minSize?.h
+      item.minW = minSize?.w
+      item.maxH = maxSize?.h
+      item.maxW = maxSize?.w
+      if (meta.props) {
+        const newProps: Record<string, typeof meta.props[keyof typeof meta.props]> = {}
+
+        for (const [key, prop] of Object.entries(meta.props)) {
+          newProps[key] = {
+            ...prop,
+            value: item.props?.[key]?.value ?? prop.value
+          }
+        }
+
+        item.props = newProps
+      }
+    }
   }
 
   const sortPegboard = (direction: 'asc' | 'desc' = 'asc') => {
@@ -104,38 +140,15 @@ export const usePegboardStore = defineStore('pegboard', () => {
     movingItems.value = []
   }
 
-  const findAvaiablePosition = (pegboardId: number, w: number, h: number, cols = 12, rows = 6) => {
+  const findAvaiablePosition = (
+    pegboardId: number,
+    w: number,
+    h: number,
+    cols = 12,
+    rows = 6
+  ) => {
     const existingItems = pegboardList.value.find((p) => p.id === pegboardId)?.items || []
-    const totalArea = cols * rows
-    const usedArea = existingItems.reduce((acc, item) => acc + item.w * item.h, 0)
-    const availableArea = totalArea - usedArea
-    if (availableArea < w * h) {
-      throw new Error('没有空位了(┬┬﹏┬┬)')
-    }
-    let x = 0
-    let y = 0
-    let found = false
-    while(!found) {
-      const overlap = existingItems.some((existing) => {
-        return !(x + w <= existing.x ||
-              x >= existing.x + existing.w ||
-              y + h <= existing.y ||
-              y >= existing.y + existing.h)
-      })
-      if (!overlap) {
-        found = true
-      } else {
-        x += w
-        if (x + w > cols) {
-          x = 0
-          y += h
-          if (y + h > rows) {
-            throw new Error('没有空位了(┬┬﹏┬┬)')
-          }
-        }
-      }
-    }
-    return { x, y }
+    return findSlot(existingItems, w, h, cols, rows)
   }
 
   const newAppItem = async (pegboardId: number, path: string) => {
@@ -165,6 +178,7 @@ export const usePegboardStore = defineStore('pegboard', () => {
     const color = (await fastAverageColor.getColorAsync(iconSrc)).hex
     const item: PegboardItem = {
       id: Date.now(),
+      widgetKey: 'launcher',
       name,
       type: 'launcher',
       x: posX,
@@ -174,7 +188,8 @@ export const usePegboardStore = defineStore('pegboard', () => {
       path,
       color,
       iconPath,
-      iconUrl: iconSrc
+      iconUrl: iconSrc,
+      resizable: true
     }
     return item
   }

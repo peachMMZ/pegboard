@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends GridLayoutItem">
-import { ref, computed, onMounted, watchEffect } from 'vue'
+import { ref, computed, onMounted, watchEffect, nextTick } from 'vue'
 import interact from 'interactjs'
 import { Interactable } from '@interactjs/core/Interactable'
 import { GridLayoutProps, GridLayoutItem } from './types'
@@ -163,78 +163,106 @@ const cancelLongPress = () => {
   emits('drag-cancel')
 }
 
-onMounted(() => {
-  let dragController: Interactable
-  if (draggable) {
-    dragController = interact('.grid-item')
-    .draggable({
-      inertia: false,
-      cursorChecker: () => '',
-      modifiers: [
-        interact.modifiers.restrictRect({
-          restriction: containerRef.value!,
-          endOnly: true
-        })
-      ],
-      listeners: {
-        move(event) {
-          if (!isDraggable.value) return
-          const target = event.target
-          const dx = event.dx
-          const dy = event.dy
+const interactables = new Map<HTMLElement, Interactable>()
+function setInteractable() {
+  if (!containerRef.value) return
+  const gridItems = containerRef.value.querySelectorAll('.grid-item')
+  gridItems.forEach((el, index) => {
+    const item = items.value[index]
+    if (!item || !(el instanceof HTMLElement)) return
 
-          const prevX = parseFloat(target.getAttribute('data-x') || '0')
-          const prevY = parseFloat(target.getAttribute('data-y') || '0')
-          const newX = prevX + dx
-          const newY = prevY + dy
+    const interactable = interact(el)
+    interactables.set(el, interactable)
 
-          target.style.transform = `translate(${newX}px, ${newY}px)`
-          target.setAttribute('data-x', newX)
-          target.setAttribute('data-y', newY)
-        },
-        end(event) {
-          if (!isDraggable.value) return
-          const target = event.target
-          const index = Array.from(target.parentNode.children).indexOf(target)
-          updateItem(target, index)
-          isDraggable.value = false
-          emits('drag-end')
-        }
-      }
-    })
-  }
-  if (resizable) {
-    interact('.grid-item')
-    .resizable({
-      edges: { left: false, top: false, right: true, bottom: true },
-      modifiers: [
-        interact.modifiers.restrictEdges({
-          outer: containerRef.value!
-        }),
-        interact.modifiers.restrictSize({
-          min: { width: minWidth, height: minHeight },
-          max: {
-            width: containerRef.value?.offsetWidth || Infinity,
-            height: containerRef.value?.offsetHeight || Infinity
+    if (draggable) {
+      interactable.draggable({
+        inertia: false,
+        cursorChecker: () => '',
+        modifiers: [
+          interact.modifiers.restrictRect({
+            restriction: containerRef.value!,
+            endOnly: true
+          })
+        ],
+        listeners: {
+          move(event) {
+            if (!isDraggable.value) return
+            const target = event.target
+            const dx = event.dx
+            const dy = event.dy
+
+            const prevX = parseFloat(target.getAttribute('data-x') || '0')
+            const prevY = parseFloat(target.getAttribute('data-y') || '0')
+            const newX = prevX + dx
+            const newY = prevY + dy
+
+            target.style.transform = `translate(${newX}px, ${newY}px)`
+            target.setAttribute('data-x', newX)
+            target.setAttribute('data-y', newY)
+          },
+          end(event) {
+            if (!isDraggable.value) return
+            const target = event.target
+            const index = Array.from(target.parentNode.children).indexOf(target)
+            updateItem(target, index)
+            isDraggable.value = false
+            emits('drag-end')
           }
-        })
-      ],
-      listeners: {
-        move(event) {
-          const { width, height } = event.rect
-          const target = event.target
-          target.style.width = `${width}px`
-          target.style.height = `${height}px`
-        },
-        end(event) {
-          const target = event.target
-          const index = Array.from(target.parentNode.children).indexOf(target)
-          updateItem(target, index)
         }
-      }
-    })
-  }
+      })
+    } else {
+      interactable.draggable({
+        enabled: false
+      })
+    }
+
+    if (resizable && item.resizable) {
+      const minWidthValue = item.minW ? item.minW * gridSize.value.width : minWidth
+      const minHeightValue = item.minH ? item.minH * gridSize.value.height : minHeight
+      const maxWidthValue = (item.maxW || cols) * gridSize.value.width
+      const maxHeightValue = (item.maxH || rows) * gridSize.value.height
+
+      interactable.resizable({
+        edges: { left: false, top: false, right: true, bottom: true },
+        modifiers: [
+          interact.modifiers.restrictEdges({
+            outer: containerRef.value!
+          }),
+          interact.modifiers.restrictSize({
+            min: { width: minWidthValue, height: minHeightValue },
+            max: {
+              width: maxWidthValue || gridSize.value.width * cols,
+              height: maxHeightValue || gridSize.value.height * rows
+            }
+          })
+        ],
+        listeners: {
+          move(event) {
+            const { width, height } = event.rect
+            const target = event.target
+            target.style.width = `${width}px`
+            target.style.height = `${height}px`
+          },
+          end(event) {
+            const target = event.target
+            const index = Array.from(target.parentNode.children).indexOf(target)
+            updateItem(target, index)
+          }
+        }
+      })
+    } else {
+      interactable.resizable({
+        enabled: false
+      })
+    }
+  })
+}
+
+onMounted(() => {
   watchEffect(() => {
+    if (items.value.length > 0) {
+      nextTick(setInteractable)
+    }
     // 容器尺寸改变时，重新计算布局
     if (!containerRef.value) return
     const gridItems = containerRef.value.querySelectorAll('.grid-item')
@@ -242,12 +270,14 @@ onMounted(() => {
       const item = items.value[index]
       if (item && el instanceof HTMLElement) {
         applyItemToDOM(el, item)
+
+        const interactable = interactables.get(el)
+        if (!interactable) return
+
+        interactable.draggable({ enabled: draggable })
+        interactable.resizable({ enabled: resizable && item.resizable })
       }
     })
-    // 拖拽同步
-    if (dragController && isDraggable.value && draggable) {
-      dragController.draggable({ enabled: true })
-    }
   })
 })
 

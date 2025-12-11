@@ -1,47 +1,64 @@
 import { PegboardItem } from '@/store/pegboard'
+import { findSlot } from '@/utils/layout'
+import { plugins } from '@/widgets'
 
-interface MarketplaceItem extends PegboardItem {
+export type TabKey = 'builtin' | 'official' | 'community'
+
+export interface MarketplaceItem extends PegboardItem {
+  tab: TabKey
   label: string
-  key: string
 }
 
-interface MarketplaceTab {
+export interface MarketplaceTab {
   label: string
-  key: string
-  items: MarketplaceItem[]
+  key: TabKey
+}
+
+export const itemList: MarketplaceItem[] = []
+
+function getBuiltinItems() {
+  const items: MarketplaceItem[] = []
+  for (const path in plugins) {
+    const module = plugins[path]
+    const plugin = module.default
+    if (plugin.hide) {
+      continue
+    }
+    const { w, h } = plugin.meta.defaultSize
+    const { x, y } = findSlot(items, w, h)
+    items.push({
+      tab: 'builtin',
+      id: `builtin${plugin.type}`,
+      widgetKey: plugin.key,
+      label: plugin.meta.title,
+      type: plugin.type,
+      x,
+      y,
+      w,
+      h,
+      minH: plugin.meta.minSize?.h,
+      minW: plugin.meta.minSize?.w,
+      maxH: plugin.meta.maxSize?.h,
+      maxW: plugin.meta.maxSize?.w,
+      props: plugin.meta.props,
+      resizable: plugin.meta.resizable
+    })
+  }
+  return items
+}
+
+export function getTabItems(tab: TabKey) {
+  if (tab === 'builtin') {
+    return getBuiltinItems()
+  }
+  return itemList.filter((item) => item.tab === tab)
 }
 
 export const tabs: MarketplaceTab[] = [
   {
     label: '内置',
     key: 'builtin',
-    items: [
-      {
-        id: 'builtin-clock',
-        label: '基础时钟',
-        key: 'builtin-clock',
-        type: 'clock',
-        component: '/clock/Clock.vue',
-        x: 0,
-        y: 0,
-        w: 4,
-        h: 2,
-      },
-      {
-        id: 'builtin-image',
-        label: '图片',
-        key: 'builtin-image',
-        type: 'image',
-        x: 4,
-        y: 0,
-        w: 4,
-        h: 2,
-        props: {
-          path: { label: '图片路径', type: 'file', editable: true, value: undefined }
-        }
-      }
-    ]
   },
-  { label: '官方', key: 'official', items: [] },
-  { label: '社区', key: 'community', items: [] }
+  { label: '官方', key: 'official' },
+  { label: '社区', key: 'community' }
 ]
